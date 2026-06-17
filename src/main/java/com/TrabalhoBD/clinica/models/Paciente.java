@@ -57,7 +57,7 @@ public class Paciente {
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Consulta> consultas = new ArrayList<Consulta>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "paciente")
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Exame> exames = new ArrayList<Exame>();
 
