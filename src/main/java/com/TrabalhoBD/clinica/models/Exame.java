@@ -9,10 +9,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "exame")
@@ -30,13 +33,9 @@ public class Exame {
     @NotBlank
     private String nome;
 
-    @Column(name = "data", length = 255, nullable = false)
-    @NotBlank
-    private String data;
-
-    @Column(name = "horario", length = 255, nullable = false)
-    @NotBlank
-    private String horario;
+    @Column(name = "dataHora", nullable = false)
+    @NotNull
+    private LocalDateTime dataHora;
 
     @Column(name = "descrição", length = 255, nullable = false)
     @NotBlank
