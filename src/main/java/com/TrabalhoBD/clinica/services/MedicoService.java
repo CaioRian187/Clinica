@@ -3,7 +3,11 @@ package com.TrabalhoBD.clinica.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
+import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
+import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
 import com.TrabalhoBD.clinica.models.Especialidade;
 import com.TrabalhoBD.clinica.repositories.EspecialidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +49,26 @@ public class MedicoService {
     }
 
     @Transactional
-    public void createMedico(Medico medico){
-        this.medicoRepository.save(medico);
+    public MedicoResponseDTO createMedico(MedicoRequestDTO dto){
+
+        Medico novoMedico = new Medico.MedicoBuilder()
+                .adicionarNome(dto.nome())
+                .adicionarCrm(dto.crm())
+                .adicionarTelefone(dto.telefone())
+                .build();
+
+        this.medicoRepository.save(novoMedico);
+
+        return new MedicoResponseDTO(
+                novoMedico.getId(),
+                novoMedico.getNome(),
+                novoMedico.getCrm(),
+                novoMedico.getTelefone(),
+                novoMedico.getEspecialidades().stream().map(
+                                entity -> new EspecialidadeResponseDTO(
+                                        entity.getId(),
+                                        entity.getNome())
+                                ).collect(Collectors.toSet()));
     }
 
     @Transactional
