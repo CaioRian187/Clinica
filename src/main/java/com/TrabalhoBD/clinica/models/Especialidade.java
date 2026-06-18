@@ -40,4 +40,9 @@ public class Especialidade {
     @ManyToMany(mappedBy = "especialidades")
     @JsonProperty(access = Access.WRITE_ONLY)
     private Set<Medico> medicos = new HashSet<>();
+
+    public Especialidade(Long id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
 }
