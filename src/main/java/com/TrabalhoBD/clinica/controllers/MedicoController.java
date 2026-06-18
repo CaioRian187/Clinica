@@ -46,10 +46,8 @@ public class MedicoController {
     } 
 
     @GetMapping
-    public ResponseEntity<List<Medico>> findAllMedicos(){
-        List<Medico> list = this.medicoService.findAllMedicos();
-
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<MedicoResponseDTO>> findAllMedicos(){
+        return ResponseEntity.ok().body(this.medicoService.findAllMedicos());
     }
 
     @PostMapping

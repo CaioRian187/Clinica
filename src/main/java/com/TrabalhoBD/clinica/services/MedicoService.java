@@ -58,12 +58,16 @@ public class MedicoService {
         return MedicoMapper.toDtoFromEntity(medico);
     }
 
-    public List<Medico> findAllMedicos (){
+    public List<MedicoResponseDTO> findAllMedicos (){
         List<Medico> list = this.medicoRepository.findAll();
         if (list.isEmpty()){
-            throw new NotFoundException("Médico não encontrado");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Nenhum médico encontrado."
+            );
         }
-        return list;
+
+        return list.stream().map(MedicoMapper::toDtoFromEntity).toList();
     }
 
     public MedicoResponseDTO adicionarEspecialidade(AdicionarEspecialidadeRequestDTO dto){
