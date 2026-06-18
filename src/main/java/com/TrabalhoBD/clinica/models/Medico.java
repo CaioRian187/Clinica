@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -64,6 +66,16 @@ public class Medico {
         this.especialidades = builder.especialidades;
         this.consultas = builder.consultas;
         this.exames = builder.exames;
+    }
+
+    public Medico(Long id, String nome, String crm, String telefone, Set<EspecialidadeResponseDTO> especialidades) {
+        this.id = id;
+        this.nome = nome;
+        this.crm = crm;
+        this.telefone = telefone;
+        this.especialidades = especialidades.stream().map(
+                dto -> new Especialidade(dto.id(),dto.nome())
+        ).collect(Collectors.toSet());
     }
 
     public static class MedicoBuilder {
