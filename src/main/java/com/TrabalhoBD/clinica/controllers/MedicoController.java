@@ -3,7 +3,10 @@ package com.TrabalhoBD.clinica.controllers;
 import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
+import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -51,12 +54,8 @@ public class MedicoController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createMedico (@Valid @RequestBody Medico medico){
-        this.medicoService.createMedico(medico);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(medico.getId()).toUri();
-
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<MedicoResponseDTO> createMedico (@Valid @RequestBody MedicoRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.medicoService.createMedico(dto));
     }
 
     @PutMapping("/{id}")
