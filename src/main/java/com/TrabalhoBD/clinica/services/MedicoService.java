@@ -121,15 +121,6 @@ public class MedicoService {
         return MedicoMapper.toDtoFromEntity(medico);
     }
 
-    private Set<Especialidade> resolveEspecialidades(Medico medico) {
-        if (medico.getEspecialidades() == null || medico.getEspecialidades().isEmpty()) {
-            return new java.util.HashSet<>();
-        }
-        return medico.getEspecialidades().stream()
-                .map(especialidade -> especialidadeRepository.findById(especialidade.getId())
-                        .orElseThrow(() -> new NotFoundException("Especialidade de id = " + especialidade.getId() + " não encontrada")))
-                .collect(java.util.stream.Collectors.toSet());
-    }
     public void deleteMedico(Long id){
         findById(id);
 
