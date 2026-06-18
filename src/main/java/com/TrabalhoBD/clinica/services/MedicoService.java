@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.TrabalhoBD.clinica.dtos.AdicionarEspecialidadeRequestDTO;
-import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
 import com.TrabalhoBD.clinica.mapper.MedicoMapper;
@@ -15,12 +14,8 @@ import com.TrabalhoBD.clinica.repositories.EspecialidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-//import org.springframework.dao.DataIntegrityViolationException;
 
-
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.repositories.MedicoRepository;
 
@@ -35,9 +30,6 @@ public class MedicoService {
 
     @Autowired
     private EspecialidadeRepository especialidadeRepository;
-
-    @Autowired
-    private EspecialidadeService especialidadeService;
 
     public MedicoResponseDTO findById(Long id){
         Medico medico = this.medicoRepository.findById(id)
