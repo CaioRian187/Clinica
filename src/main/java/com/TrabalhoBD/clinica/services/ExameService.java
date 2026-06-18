@@ -61,8 +61,7 @@ public class ExameService {
         Exame newExame = this.findById(exame.getId());
 
         newExame.setNome(exame.getNome());
-        newExame.setData(exame.getData());
-        newExame.setHorario(exame.getHorario());
+        newExame.setDataHora(exame.getDataHora());
         newExame.setDescricao(exame.getDescricao());
 
         return this.exameRepository.save(newExame);
