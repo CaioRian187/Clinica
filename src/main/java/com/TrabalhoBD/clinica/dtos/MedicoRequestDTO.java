@@ -14,10 +14,7 @@ public record MedicoRequestDTO(
         String crm,
 
         @NotBlank(message = "O telefone é obrigatório.")
-        String telefone,
-
-        @NotEmpty(message = "O médico deve possuir pelo menos uma especialidade.")
-        Set<Long> especialidadesIds
+        String telefone
 
 ) {
 }
