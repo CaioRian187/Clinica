@@ -3,6 +3,8 @@ package com.TrabalhoBD.clinica.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.TrabalhoBD.clinica.dtos.EspecialidadeRequestDTO;
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import com.TrabalhoBD.clinica.repositories.EspecialidadeRepository;
 
 @Service
 public class EspecialidadeService {
+
     @Autowired
     private EspecialidadeRepository especialidadeRepository;
 
@@ -36,8 +39,16 @@ public class EspecialidadeService {
     }
 
     @Transactional
-    public void create(Especialidade especialidade){
+    public EspecialidadeResponseDTO create(EspecialidadeRequestDTO dto){
+        Especialidade especialidade = new Especialidade();
+        especialidade.setNome(dto.nome());
+
         this.especialidadeRepository.save(especialidade);
+
+        return new EspecialidadeResponseDTO(
+                especialidade.getId(),
+                especialidade.getNome()
+        );
     }
 
     @Transactional

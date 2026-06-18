@@ -3,7 +3,10 @@ package com.TrabalhoBD.clinica.controllers;
 import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.EspecialidadeRequestDTO;
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -50,12 +53,8 @@ public class EspecialidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody Especialidade especialidade){
-        this.especialidadeService.create(especialidade);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(especialidade.getId())
-                .toUri();
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<EspecialidadeResponseDTO> create(@Valid @RequestBody EspecialidadeRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.especialidadeService.create(dto));
     }
 
     @PutMapping("/{id}")
