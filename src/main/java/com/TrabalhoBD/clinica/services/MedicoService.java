@@ -105,17 +105,20 @@ public class MedicoService {
     }
 
     @Transactional
-    public Medico updateMedico(Medico medico){
-        MedicoResponseDTO medicoDto = findById(medico.getId());
+    public MedicoResponseDTO updateMedico(Long id, MedicoRequestDTO dto){
+        Medico medico = this.medicoRepository.findById(id)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Médico de Id: " + id + " não encontrado."
+                ));
 
-        Medico newMedico = MedicoMapper.toEntityFromDto(medicoDto);
+        medico.setNome(dto.nome());
+        medico.setCrm(dto.crm());
+        medico.setTelefone(dto.telefone());
 
-        newMedico.setNome(medico.getNome());
-        newMedico.setCrm(medico.getCrm());
-        newMedico.setTelefone(medico.getTelefone());
-        newMedico.setEspecialidades(resolveEspecialidades(medico));
+        this.medicoRepository.save(medico);
 
-        return this.medicoRepository.save(newMedico);
+        return MedicoMapper.toDtoFromEntity(medico);
     }
 
     private Set<Especialidade> resolveEspecialidades(Medico medico) {

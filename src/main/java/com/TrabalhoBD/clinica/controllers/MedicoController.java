@@ -61,10 +61,8 @@ public class MedicoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateMedico(@Valid @RequestBody Medico medico, @PathVariable Long id){
-        medico.setId(id);
-        medico = this.medicoService.updateMedico(medico);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long id, @Valid @RequestBody MedicoRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.medicoService.updateMedico(id, dto));
     }
 
     @DeleteMapping("/{id}")
