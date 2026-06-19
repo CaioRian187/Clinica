@@ -46,31 +46,37 @@ public class ConsultaService {
         return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
-    public List<Consulta> findAllByMedicoId(Long medicoId){
+    public List<ConsultaResponseDTO> findAllByMedicoId(Long medicoId){
         List<Consulta> consultas = this.consultaRepository.findByMedico_id(medicoId);
+
+        this.verificarListaVazia(consultas);
+
+        return consultas.stream().map(ConsultaMapper::toDtoFromEntity).toList();
+    }
+
+    public List<ConsultaResponseDTO> findAllByPacienteId(Long pacienteId){
+        List<Consulta> consultas = this.consultaRepository.findByPaciente_id(pacienteId);
+
+        this.verificarListaVazia(consultas);
+
+        return consultas.stream().map(ConsultaMapper::toDtoFromEntity).toList();
+    }
+
+    public List<ConsultaResponseDTO> findAll(){
+        List<Consulta> consultas = this.consultaRepository.findAll();
+
+        this.verificarListaVazia(consultas);
+
+        return consultas.stream().map(ConsultaMapper::toDtoFromEntity).toList();
+    }
+
+    private void verificarListaVazia(List<Consulta> consultas){
         if (consultas.isEmpty()) {
-            throw new NotFoundException("Nenhuma consulta encontrada");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Nenhuma consulta agendada."
+            );
         }
-        return consultas;
-    }
-
-    public List<Consulta> findAllByPacienteId(Long consultaId){
-        List<Consulta> consultas = this.consultaRepository.findByPaciente_id(consultaId);
-
-        if (consultas.isEmpty()){
-            throw new NotFoundException("Nenhuma consulta encontrada");
-        }
-        return consultas;
-    }
-
-
-    public List<Consulta> findAll(){
-        List<Consulta> list = this.consultaRepository.findAll();
-
-        if(list.isEmpty()){
-            throw new NotFoundException("Nenhuma consulta encontrada");
-        }
-        return list;
     }
 
     @Transactional
