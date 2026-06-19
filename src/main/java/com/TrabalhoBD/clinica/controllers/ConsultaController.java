@@ -36,9 +36,8 @@ public class ConsultaController {
     private PacienteService pacienteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Consulta> findById(@PathVariable Long id){
-        Consulta consulta = this.consultaService.findById(id);
-        return ResponseEntity.ok().body(consulta);
+    public ResponseEntity<ConsultaResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.consultaService.findById(id));
     }
 
     @GetMapping("/medico/{id_medico}")
@@ -68,10 +67,8 @@ public class ConsultaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateConsulta(@Valid @RequestBody Consulta consulta, @PathVariable Long id){
-        consulta.setId(id);
-        consulta = this.consultaService.updateConsulta(consulta);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ConsultaResponseDTO> updateConsulta(@PathVariable Long id, @Valid @RequestBody ConsultaRequestDTO dto ){
+        return ResponseEntity.status(HttpStatus.OK).body(this.consultaService.updateConsulta(id, dto));
     } 
 
     @DeleteMapping("/{id}")

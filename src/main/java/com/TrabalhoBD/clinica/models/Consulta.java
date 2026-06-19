@@ -57,6 +57,14 @@ public class Consulta {
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Receita> receitas = new ArrayList<>();
 
+    public Consulta(Long id, LocalDateTime dataHora, String observacoes, Medico medico, Paciente paciente) {
+        this.id = id;
+        this.dataHora = dataHora;
+        this.observacoes = observacoes;
+        this.medico = medico;
+        this.paciente = paciente;
+    }
+
     private Consulta(ConsultaBuilder builder) {
         this.dataHora = builder.dataHora;
         this.observacoes = builder.observacoes;

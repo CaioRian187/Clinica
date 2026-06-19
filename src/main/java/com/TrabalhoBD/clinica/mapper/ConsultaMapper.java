@@ -3,6 +3,8 @@ package com.TrabalhoBD.clinica.mapper;
 import com.TrabalhoBD.clinica.dtos.ConsultaResponseDTO;
 import com.TrabalhoBD.clinica.dtos.ReceitaResponseDTO;
 import com.TrabalhoBD.clinica.models.Consulta;
+import com.TrabalhoBD.clinica.models.Medico;
+import com.TrabalhoBD.clinica.models.Paciente;
 
 public abstract class ConsultaMapper {
 
@@ -26,4 +28,16 @@ public abstract class ConsultaMapper {
                         )).toList()
         );
     }
+
+    public static Consulta toEntityFromDto(ConsultaResponseDTO dto, Medico medico, Paciente paciente){
+        return new Consulta(
+                dto.id(),
+                dto.datahora(),
+                dto.observacoes(),
+                medico,
+                paciente
+        );
+    }
+
+
 }

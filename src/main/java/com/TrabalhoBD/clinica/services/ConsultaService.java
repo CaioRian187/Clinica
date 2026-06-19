@@ -2,7 +2,6 @@ package com.TrabalhoBD.clinica.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import com.TrabalhoBD.clinica.dtos.ConsultaRequestDTO;
 import com.TrabalhoBD.clinica.dtos.ConsultaResponseDTO;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Consulta;
-import com.TrabalhoBD.clinica.models.Receita;
 import com.TrabalhoBD.clinica.repositories.ConsultaRepository;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +37,13 @@ public class ConsultaService {
     @Autowired
     private PacienteService pacienteService;
 
-    public Consulta findById(Long id){
-        Optional<Consulta> consulta = this.consultaRepository.findById(id);
-        return consulta.orElseThrow( () -> new NotFoundException("Consulta de id = " + id + " não encontrada"));
+    public ConsultaResponseDTO findById(Long id){
+        Consulta consulta = this.consultaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Consulta de Id: " + id + " não encontrada."
+                ));
+        return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
     public List<Consulta> findAllByMedicoId(Long medicoId){
@@ -106,21 +108,35 @@ public class ConsultaService {
     }
 
     @Transactional
-    public Consulta updateConsulta(Consulta consulta){
-        Consulta newConsulta = this.findById(consulta.getId());
+    public ConsultaResponseDTO updateConsulta(Long id, ConsultaRequestDTO dto){
+        Consulta consulta = this.consultaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Consulta de Id: " + id + " não encontrada."
+                ));
 
-        newConsulta.setDataHora(consulta.getDataHora());
-        newConsulta.setObservacoes(consulta.getObservacoes());
-
-        if (newConsulta.getReceitas() != null) {
-            newConsulta.getReceitas().forEach(r -> r.setDataEmissao(newConsulta.getDataHora()));
+        if (!consulta.getMedico().getId().equals(dto.medicoId())){
+            MedicoResponseDTO medicoResponseDTO = this.medicoService.findById(dto.medicoId());
+            Medico medico = MedicoMapper.toEntityFromDto(medicoResponseDTO);
+            consulta.setMedico(medico);
         }
 
-        return this.consultaRepository.save(newConsulta);
+        if (!consulta.getPaciente().getId().equals(dto.pacienteId())){
+            PacienteResponseDTO pacienteResponseDTO = this.pacienteService.findById(dto.pacienteId());
+            Paciente paciente = PacienteMapper.toEntityFromDto(pacienteResponseDTO);
+            consulta.setPaciente(paciente);
+        }
+
+        consulta.setDataHora(dto.datahora());
+        consulta.setObservacoes(dto.observacoes());
+
+        this.consultaRepository.save(consulta);
+
+        return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
     public void deleteConsulta(Long id){
-        Consulta consulta = findById(id);
+        findById(id);
 
         try{
             this.consultaRepository.deleteById(id);
