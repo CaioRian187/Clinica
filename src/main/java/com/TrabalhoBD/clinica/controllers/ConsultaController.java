@@ -3,7 +3,11 @@ package com.TrabalhoBD.clinica.controllers;
 import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.ConsultaRequestDTO;
+import com.TrabalhoBD.clinica.dtos.ConsultaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -59,11 +63,8 @@ public class ConsultaController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> createConsulta(@Valid @RequestBody Consulta consulta){
-        this.consultaService.createConsulta(consulta);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(consulta.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<ConsultaResponseDTO> createConsulta(@Valid @RequestBody ConsultaRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.consultaService.createConsulta(dto));
     }
 
     @PutMapping("/{id}")
