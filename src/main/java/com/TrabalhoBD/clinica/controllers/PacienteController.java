@@ -37,10 +37,8 @@ public class PacienteController {
     } 
 
     @GetMapping
-    public ResponseEntity<List<Paciente>> findAll(){
-        List<Paciente> list = this.pacienteService.findAll();
-
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<PacienteResponseDTO>> findAll(){
+        return ResponseEntity.ok().body(this.pacienteService.findAll());
     }
 
     @PostMapping

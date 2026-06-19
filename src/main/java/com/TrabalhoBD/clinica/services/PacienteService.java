@@ -44,12 +44,10 @@ public class PacienteService {
         return PacienteMapper.toDtoFromEntity(paciente);
     }
 
-    public List<Paciente> findAll(){
-        List<Paciente> list = this.pacienteRepository.findAll();
-        if (list.isEmpty()){
-            throw new NotFoundException("Nenhum paciente encontrado");
-        }
-        return list;
+    public List<PacienteResponseDTO> findAll(){
+        return this.pacienteRepository.findAll()
+                .stream().map(PacienteMapper::toDtoFromEntity)
+                .toList();
     }
 
     @Transactional
