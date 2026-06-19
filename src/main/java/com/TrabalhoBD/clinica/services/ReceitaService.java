@@ -45,7 +45,7 @@ public class ReceitaService {
     @Transactional
     public void create(Receita receita){
         if (receita.getConsulta() != null && receita.getConsulta().getId() != null) {
-            receita.setDataEmissao(receita.getConsulta().getDataHora().toLocalDate());
+            receita.setDataEmissao(receita.getConsulta().getDataHora());
         }
         this.receitaRepository.save(receita);
     }
