@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "receita")
@@ -31,7 +32,7 @@ public class Receita {
     private Long id;
 
     @Column(name ="data_emissão", nullable = false)
-    private LocalDate dataEmissao;
+    private LocalDateTime dataEmissao;
 
     @Column(name = "medicamento", nullable = false, length = 255)
     @NotBlank
