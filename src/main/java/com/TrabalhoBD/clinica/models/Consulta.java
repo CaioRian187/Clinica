@@ -56,4 +56,66 @@ public class Consulta {
     @OneToMany(mappedBy = "consulta", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Receita> receitas = new ArrayList<>();
+
+    private Consulta(ConsultaBuilder builder) {
+        this.dataHora = builder.dataHora;
+        this.observacoes = builder.observacoes;
+        this.medico = builder.medico;
+        this.paciente = builder.paciente;
+        this.receitas = builder.receitas;
+    }
+
+    public static class ConsultaBuilder {
+        private LocalDateTime dataHora;
+        private String observacoes;
+        private Medico medico;
+        private Paciente paciente;
+        private List<Receita> receitas = new ArrayList<>();
+
+        public ConsultaBuilder() {
+
+        }
+
+        public ConsultaBuilder adicionarDataHora(LocalDateTime dataHora){
+            this.dataHora = dataHora;
+            return this;
+        }
+
+        public ConsultaBuilder adicionarObservacoes(String observacoes) {
+            this.observacoes = observacoes;
+            return this;
+        }
+
+        public ConsultaBuilder adicionarMedico(Medico medico){
+            this.medico = medico;
+            return this;
+        }
+
+        public ConsultaBuilder adicionarPaciente(Paciente paciente){
+            this.paciente = paciente;
+            return this;
+        }
+
+
+        public ConsultaBuilder adicionarReceita(Receita receita) {
+            this.receitas.add(receita);
+            return this;
+        }
+
+        public Consulta build() {
+            if (this.dataHora == null) {
+                throw new IllegalStateException("A data e hora da consulta não podem ser nulas.");
+            }
+            if (this.medico == null) {
+                throw new IllegalStateException("Um médico válido deve ser associado à consulta.");
+            }
+            if (this.paciente == null) {
+                throw new IllegalStateException("Um paciente válido deve ser associado à consulta.");
+            }
+            if (this.observacoes == null || this.observacoes.isBlank()) {
+                this.observacoes = "Sem observações registradas.";
+            }
+            return new Consulta(this);
+        }
+    }
 }
