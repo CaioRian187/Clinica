@@ -32,10 +32,8 @@ public class PacienteController {
     }
 
     @GetMapping("nome/{nome}")
-    public ResponseEntity<Paciente> findByNome(@Valid @PathVariable String nome){
-        Paciente paciente = this.pacienteService.findByNome(nome);
-
-        return ResponseEntity.ok().body(paciente);
+    public ResponseEntity<PacienteResponseDTO> findByNome(@Valid @PathVariable String nome){
+        return ResponseEntity.ok().body(this.pacienteService.findByNome(nome));
     } 
 
     @GetMapping

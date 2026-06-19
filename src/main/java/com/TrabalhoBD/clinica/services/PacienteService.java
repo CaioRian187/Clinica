@@ -34,9 +34,14 @@ public class PacienteService {
         return PacienteMapper.toDtoFromEntity(paciente);
     }
 
-    public Paciente findByNome(String nome){
-        Optional<Paciente> paciente = this.pacienteRepository.findByNome(nome);
-        return paciente.orElseThrow( () -> new NotFoundException("Paciete de nome = " + nome + " não encontrado"));
+    public PacienteResponseDTO findByNome(String nome){
+
+        Paciente paciente = this.pacienteRepository.findByNome(nome)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Paciente de nome: " + nome + " não encontrado."
+                ));
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
     public List<Paciente> findAll(){
