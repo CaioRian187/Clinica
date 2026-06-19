@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.TrabalhoBD.clinica.dtos.ConsultaResponseDTO;
 import com.TrabalhoBD.clinica.dtos.ReceitaRequestDTO;
+import com.TrabalhoBD.clinica.dtos.ReceitaResponseDTO;
 import com.TrabalhoBD.clinica.mapper.ConsultaMapper;
 import com.TrabalhoBD.clinica.repositories.ConsultaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,23 +59,8 @@ public class ReceitaController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createReceita(@Valid @RequestBody ReceitaRequestDTO dto){
-        Consulta consulta = this.consultaRepository.findById(dto.consultaId())
-                .orElseThrow( () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Consulta de Id: " + dto.consultaId() + " não encontrada."
-                ));
-
-        Receita receita = new Receita();
-
-        receita.setConsulta(consulta);
-        receita.setDataEmissao(consulta.getDataHora());
-
-        this.receitaService.create(receita);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(receita.getId()).toUri();
-
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<ReceitaResponseDTO> createReceita(@Valid @RequestBody ReceitaRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.receitaService.create(dto));
     }
 
     @PutMapping("/{id}")
