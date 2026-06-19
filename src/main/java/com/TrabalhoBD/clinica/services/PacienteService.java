@@ -3,6 +3,9 @@ package com.TrabalhoBD.clinica.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.TrabalhoBD.clinica.dtos.PacienteRequestDTO;
+import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
+import com.TrabalhoBD.clinica.mapper.PacienteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -38,8 +41,19 @@ public class PacienteService {
     }
 
     @Transactional
-    public void createPaciente(Paciente paciente){
+    public PacienteResponseDTO createPaciente(PacienteRequestDTO dto){
+
+        Paciente paciente = new Paciente.PacienteBuilder()
+                .adicionarNome(dto.nome())
+                .adicionarCpf(dto.cpf())
+                .adicionarDataNascimento(dto.dataNascimento())
+                .adicionarTelefone(dto.telefone())
+                .adicionarEndereco(dto.endereco())
+                .build();
+
         this.pacienteRepository.save(paciente);
+
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
     @Transactional
