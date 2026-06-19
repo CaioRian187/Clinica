@@ -40,9 +40,8 @@ public class ReceitaController {
     private ConsultaRepository consultaRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Receita> findById(@PathVariable Long id){
-        Receita receita = this.receitaService.findById(id);
-        return ResponseEntity.ok().body(receita);
+    public ResponseEntity<ReceitaResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.receitaService.findById(id));
     }
 
     @GetMapping("/consulta/{consulta_id}")
@@ -64,20 +63,8 @@ public class ReceitaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateReceita(@Valid @RequestBody Receita receita, @PathVariable Long id){
-        receita.setId(id);
-
-        if (receita.getDataEmissao() == null && receita.getConsulta() != null) {
-            Consulta c = this.consultaRepository.findById(receita.getConsulta().getId())
-                    .orElseThrow( () -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "Consulta de não encontrada."
-                    ));
-            receita.setDataEmissao(c.getDataHora());
-        }
-        
-        receita = this.receitaService.update(receita);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ReceitaResponseDTO> updateReceita( @PathVariable Long id, @Valid @RequestBody ReceitaRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.OK).body(this.receitaService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")

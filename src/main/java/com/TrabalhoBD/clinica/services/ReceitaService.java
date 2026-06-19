@@ -11,14 +11,18 @@ import com.TrabalhoBD.clinica.mapper.ReceitaMapper;
 import com.TrabalhoBD.clinica.models.Consulta;
 import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.models.Paciente;
+import com.TrabalhoBD.clinica.repositories.ConsultaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Receita;
 import com.TrabalhoBD.clinica.repositories.ReceitaRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Service
@@ -36,10 +40,16 @@ public class ReceitaService {
     @Autowired
     private PacienteService pacienteService;
 
-    public Receita findById(Long id){
-        Optional<Receita> receita = this.receitaRepository.findById(id);
+    @Autowired
+    private ConsultaRepository consultaRepository;
 
-        return receita.orElseThrow( () -> new NotFoundException("Receita de id = " + id + " não encontrada"));
+    public ReceitaResponseDTO findById(Long id){
+        Receita receita = this.receitaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Receita de Id: " + id + " não encontrada."
+                ));
+        return ReceitaMapper.toDtoFromEntity(receita);
     }
 
     public List<Receita> findAll(){
@@ -86,21 +96,23 @@ public class ReceitaService {
     }
 
     @Transactional
-    public Receita update(Receita receita){
-        Receita newReceita = findById(receita.getId());
+    public ReceitaResponseDTO update(Long id, ReceitaRequestDTO dto){
+        Consulta consulta = this.consultaRepository.findById(dto.consultaId())
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Consulta não encontrada"
+                ));
 
-        newReceita.setMedicamento(receita.getMedicamento());
-        newReceita.setDosagem(receita.getDosagem());
-        newReceita.setInstrucoes(receita.getInstrucoes());
+        ReceitaResponseDTO receitaResponseDTO = this.findById(id);
+        Receita receita = ReceitaMapper.toEntityFromDto(receitaResponseDTO, consulta);
 
-        if (receita.getDataEmissao() != null){
-            newReceita.setDataEmissao(receita.getDataEmissao());
-        }
+        receita.setMedicamento(dto.medicamento());
+        receita.setDosagem(dto.dosagem());
+        receita.setInstrucoes(dto.instrucoes());
 
-        if (receita.getConsulta() != null && receita.getConsulta().getId() != null) {
-            newReceita.setConsulta(receita.getConsulta());
-        }
-        return this.receitaRepository.save(newReceita);
+        this.receitaRepository.save(receita);
+
+        return ReceitaMapper.toDtoFromEntity(receita);
     }
 
     public void delete(Long id){
