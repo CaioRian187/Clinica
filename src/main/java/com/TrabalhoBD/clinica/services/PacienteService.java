@@ -8,6 +8,7 @@ import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
 import com.TrabalhoBD.clinica.mapper.PacienteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.TrabalhoBD.clinica.exceptions.NotFoundException;
@@ -15,6 +16,7 @@ import com.TrabalhoBD.clinica.models.Paciente;
 import com.TrabalhoBD.clinica.repositories.PacienteRepository;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PacienteService {
@@ -22,9 +24,14 @@ public class PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
     
-    public Paciente findById(Long id){
-        Optional<Paciente> paciente = this.pacienteRepository.findById(id);
-        return paciente.orElseThrow( () -> new NotFoundException("Paciente de id = " + id + " não encontrado."));
+    public PacienteResponseDTO findById(Long id){
+        Paciente paciente = this.pacienteRepository.findById(id)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Paciente de Id: " + id + " não encontrado"
+                ));
+
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
     public Paciente findByNome(String nome){
@@ -58,7 +65,11 @@ public class PacienteService {
 
     @Transactional
     public Paciente updatePaciente(Paciente paciente){
-        Paciente newPaciente = this.findById(paciente.getId());
+        Paciente newPaciente = this.pacienteRepository.findById(paciente.getId())
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Paciente de Id: " + paciente.getId() + " não encontrado"
+                ));
 
         newPaciente.setNome(paciente.getNome());
         newPaciente.setCpf(paciente.getCpf());
