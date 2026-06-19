@@ -1,13 +1,10 @@
 package com.TrabalhoBD.clinica.dtos;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.List;
-
 
 public record ConsultaRequestDTO(
 
