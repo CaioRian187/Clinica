@@ -49,5 +49,70 @@ public class Exame {
     @JoinColumn(name = "paciente_id", nullable = false, updatable = false)
     private Paciente paciente;
 
+    private Exame(ExameBuilder builder) {
+        this.nome = builder.nome;
+        this.dataHora = builder.dataHora;
+        this.descricao = builder.descricao;
+        this.medico = builder.medico;
+        this.paciente = builder.paciente;
+    }
+
+    public static class ExameBuilder {
+        private String nome;
+        private LocalDateTime dataHora;
+        private String descricao;
+        private Medico medico;
+        private Paciente paciente;
+
+        public ExameBuilder() {
+
+        }
+
+        public ExameBuilder adicionarNome(String nome){
+            this.nome = nome;
+            return this;
+        }
+
+        public ExameBuilder adicionarDataHora(LocalDateTime dataHora){
+            this.dataHora = dataHora;
+            return this;
+        }
+
+        public ExameBuilder adicionarDescricao(String descricao) {
+            this.descricao = descricao;
+            return this;
+        }
+
+        public ExameBuilder adicionarMedico(Medico medico){
+            this.medico = medico;
+            return this;
+        }
+
+        public ExameBuilder adicionarPaciente(Paciente paciente){
+            this.paciente = paciente;
+            return this;
+        }
+
+        public Exame build() {
+            if (this.nome == null || this.nome.isBlank()) {
+                throw new IllegalStateException("O nome do exame é obrigatório.");
+            }
+            if (this.dataHora == null) {
+                throw new IllegalStateException("A data e hora do exame são obrigatórias.");
+            }
+            if (this.medico == null) {
+                throw new IllegalStateException("Um médico válido deve ser associado ao exame.");
+            }
+            if (this.paciente == null) {
+                throw new IllegalStateException("Um paciente válido deve ser associado ao exame.");
+            }
+
+            if (this.descricao == null || this.descricao.isBlank()) {
+                this.descricao = "Nenhuma descrição informada.";
+            }
+
+            return new Exame(this);
+        }
+    }
 
 }

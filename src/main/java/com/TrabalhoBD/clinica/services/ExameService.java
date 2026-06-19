@@ -3,6 +3,15 @@ package com.TrabalhoBD.clinica.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.TrabalhoBD.clinica.dtos.ExameRequestDTO;
+import com.TrabalhoBD.clinica.dtos.ExameResponseDTO;
+import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
+import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
+import com.TrabalhoBD.clinica.mapper.ExameMapper;
+import com.TrabalhoBD.clinica.mapper.MedicoMapper;
+import com.TrabalhoBD.clinica.mapper.PacienteMapper;
+import com.TrabalhoBD.clinica.models.Medico;
+import com.TrabalhoBD.clinica.models.Paciente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -17,6 +26,12 @@ public class ExameService {
     
     @Autowired
     private ExameRepository exameRepository;
+
+    @Autowired
+    private MedicoService medicoService;
+
+    @Autowired
+    private PacienteService pacienteService;
 
     public Exame findById(Long id){
         Optional<Exame> exame = this.exameRepository.findById(id);
@@ -51,8 +66,25 @@ public class ExameService {
     }
 
     @Transactional
-    public void create(Exame exame){
+    public ExameResponseDTO create(ExameRequestDTO dto){
+
+        MedicoResponseDTO medicoResponseDTO = this.medicoService.findById(dto.medicoId());
+        Medico medico = MedicoMapper.toEntityFromDto(medicoResponseDTO);
+
+        PacienteResponseDTO pacienteResponseDTO = this.pacienteService.findById(dto.pacienteId());
+        Paciente paciente = PacienteMapper.toEntityFromDto(pacienteResponseDTO);
+
+        Exame exame = new Exame.ExameBuilder()
+                .adicionarNome(dto.nome())
+                .adicionarDataHora(dto.dataHora())
+                .adicionarDescricao(dto.descricao())
+                .adicionarMedico(medico)
+                .adicionarPaciente(paciente)
+                .build();
+
         this.exameRepository.save(exame);
+
+        return ExameMapper.toDtoFromEntity(exame);
     }
 
 

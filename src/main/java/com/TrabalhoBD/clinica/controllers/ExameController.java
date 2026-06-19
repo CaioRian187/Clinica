@@ -3,7 +3,10 @@ package com.TrabalhoBD.clinica.controllers;
 import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.ExameRequestDTO;
+import com.TrabalhoBD.clinica.dtos.ExameResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -69,11 +72,8 @@ public class ExameController {
 
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody Exame exame){
-        this.exameService.create(exame);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(exame.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<ExameResponseDTO> create(@Valid @RequestBody ExameRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.exameService.create(dto));
     }
 
     @PutMapping("/{id}")
