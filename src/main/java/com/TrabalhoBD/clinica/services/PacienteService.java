@@ -1,7 +1,6 @@
 package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.TrabalhoBD.clinica.dtos.PacienteRequestDTO;
 import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
@@ -11,7 +10,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Paciente;
 import com.TrabalhoBD.clinica.repositories.PacienteRepository;
 
@@ -67,20 +65,22 @@ public class PacienteService {
     }
 
     @Transactional
-    public Paciente updatePaciente(Paciente paciente){
-        Paciente newPaciente = this.pacienteRepository.findById(paciente.getId())
+    public PacienteResponseDTO updatePaciente(Long pacienteId, PacienteRequestDTO dto){
+        Paciente paciente = this.pacienteRepository.findById(pacienteId)
                 .orElseThrow( () -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Paciente de Id: " + paciente.getId() + " não encontrado"
+                        "Paciente de Id: " + pacienteId + " não encontrado"
                 ));
 
-        newPaciente.setNome(paciente.getNome());
-        newPaciente.setCpf(paciente.getCpf());
-        newPaciente.setDataNascimento(paciente.getDataNascimento());
-        newPaciente.setTelefone(paciente.getTelefone());
-        newPaciente.setEndereco(paciente.getEndereco());
+        paciente.setNome(dto.nome());
+        paciente.setCpf(dto.cpf());
+        paciente.setDataNascimento(dto.dataNascimento());
+        paciente.setTelefone(dto.telefone());
+        paciente.setEndereco(dto.endereco());
 
-        return this.pacienteRepository.save(newPaciente);
+        this.pacienteRepository.save(paciente);
+
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
     public void deletePaciente(Long id){

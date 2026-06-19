@@ -1,6 +1,5 @@
 package com.TrabalhoBD.clinica.controllers;
 
-import java.net.URI;
 import java.util.List;
 
 import com.TrabalhoBD.clinica.dtos.PacienteRequestDTO;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.TrabalhoBD.clinica.models.Paciente;
 import com.TrabalhoBD.clinica.services.PacienteService;
@@ -47,10 +45,8 @@ public class PacienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Paciente> updatePaciente(@Valid @RequestBody Paciente paciente, @PathVariable Long id){
-        paciente.setId(id);
-        paciente = this.pacienteService.updatePaciente(paciente);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<PacienteResponseDTO> updatePaciente(@PathVariable Long id, @Valid @RequestBody PacienteRequestDTO dto ){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.pacienteService.updatePaciente(id, dto));
     }
 
     @DeleteMapping("/{id}")
