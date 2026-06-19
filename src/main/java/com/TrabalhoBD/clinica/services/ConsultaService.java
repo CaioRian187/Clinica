@@ -71,7 +71,7 @@ public class ConsultaService {
     }
 
     private void verificarListaVazia(List<Consulta> consultas){
-        if (consultas.isEmpty()) {
+        if (consultas == null ||consultas.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "Nenhuma consulta agendada."

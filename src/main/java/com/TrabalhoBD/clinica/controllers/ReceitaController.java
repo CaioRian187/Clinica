@@ -44,17 +44,14 @@ public class ReceitaController {
         return ResponseEntity.status(HttpStatus.OK).body(this.receitaService.findById(id));
     }
 
-    @GetMapping("/consulta/{consulta_id}")
-    public ResponseEntity<List<Receita>> findByConsultaId(@PathVariable Long consulta_id){
-        this.consultaService.findById(consulta_id);
-        List<Receita> list = this.receitaService.findAllByConsultaId(consulta_id);
-        return ResponseEntity.ok().body(list);
+    @GetMapping("/consulta/{consultaId}")
+    public ResponseEntity<List<ReceitaResponseDTO>> findByConsultaId(@PathVariable Long consultaId){
+        return ResponseEntity.status(HttpStatus.OK).body(this.receitaService.findAllByConsultaId(consultaId));
     }
 
     @GetMapping
-    public ResponseEntity<List<Receita>> findAllReceitas(){
-        List<Receita> list = this.receitaService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<ReceitaResponseDTO>> findAllReceitas(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.receitaService.findAll());
     }
 
     @PostMapping

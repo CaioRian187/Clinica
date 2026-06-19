@@ -52,21 +52,29 @@ public class ReceitaService {
         return ReceitaMapper.toDtoFromEntity(receita);
     }
 
-    public List<Receita> findAll(){
+    public List<ReceitaResponseDTO> findAll(){
         List<Receita> list = this.receitaRepository.findAll();
 
-        if (list.isEmpty()){
-            throw new NotFoundException("Nenhuma receita encontrada");
-        }
-        return list;
+        verificarListaVazia(list);
+
+        return list.stream().map(ReceitaMapper::toDtoFromEntity).toList();
     }
 
-    public List<Receita> findAllByConsultaId(Long consultaId){
+    public List<ReceitaResponseDTO> findAllByConsultaId(Long consultaId){
         List<Receita> list = this.receitaRepository.findByConsulta_id(consultaId);
-        if (list.isEmpty()){
-            throw new NotFoundException("Nenhuma consulta encontrada");
+
+        verificarListaVazia(list);
+
+        return list.stream().map(ReceitaMapper::toDtoFromEntity).toList();
+    }
+
+    private void verificarListaVazia(List<Receita> receitas){
+        if (receitas == null ||receitas.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Nenhuma consulta agendada."
+            );
         }
-        return list;
     }
 
     @Transactional
