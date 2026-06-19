@@ -22,9 +22,7 @@ public record ConsultaRequestDTO(
         Long medicoId,
 
         @NotNull(message = "O Id do paciente não pode ser nulo.")
-        Long pacienteId,
+        Long pacienteId
 
-        @Valid @NotNull(message = "A lista de receitas não pode ser nula.")
-        List<ReceitaRequestDTO> receitas
 ) {
 }
