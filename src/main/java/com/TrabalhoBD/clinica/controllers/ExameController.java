@@ -48,25 +48,19 @@ public class ExameController {
     }
 
 
-    @GetMapping("/medico/{id_medico}")
-    public ResponseEntity<List<Exame>> findByMedicoId(@PathVariable Long id_medico){
-        this.medicoService.findById(id_medico);
-
-        List<Exame> exames = this.exameService.findByMedicoid(id_medico);
-        return ResponseEntity.ok().body(exames);
+    @GetMapping("/medico/{medicoId}")
+    public ResponseEntity<List<ExameResponseDTO>> findByMedicoId(@PathVariable Long medicoId){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findByMedicoid(medicoId));
     }
 
-    @GetMapping("/paciente/{id_paciente}")
-    public ResponseEntity<List<Exame>> findByPacienteId(@PathVariable Long id_paciente){
-        this.pacienteService.findById(id_paciente);
-        List<Exame> exames = this.exameService.findByPacienteId(id_paciente);
-        return ResponseEntity.ok().body(exames);
+    @GetMapping("/paciente/{pacienteId}")
+    public ResponseEntity<List<ExameResponseDTO>> findByPacienteId(@PathVariable Long pacienteId){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findByPacienteId(pacienteId));
     }
 
     @GetMapping
-    public ResponseEntity<List<Exame>> findAll(){
-        List<Exame> list = this.exameService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<ExameResponseDTO>> findAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findAll());
     }
 
 

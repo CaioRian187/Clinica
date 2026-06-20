@@ -1,6 +1,7 @@
 package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.TrabalhoBD.clinica.dtos.ExameRequestDTO;
 import com.TrabalhoBD.clinica.dtos.ExameResponseDTO;
@@ -9,6 +10,7 @@ import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
 import com.TrabalhoBD.clinica.mapper.ExameMapper;
 import com.TrabalhoBD.clinica.mapper.MedicoMapper;
 import com.TrabalhoBD.clinica.mapper.PacienteMapper;
+import com.TrabalhoBD.clinica.models.Consulta;
 import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.models.Paciente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,31 +45,37 @@ public class ExameService {
         return ExameMapper.toDtoFromEntity(exame);
     }
 
-    public List<Exame> findByMedicoid(Long medicoId){
+    public List<ExameResponseDTO> findByMedicoid(Long medicoId){
         List<Exame> exames = this.exameRepository.findByMedico_id(medicoId);
 
-        if (exames.isEmpty()){
-            throw new NotFoundException("Nenhum exame encontrado.");
-        }
-        return exames;
+        verificarListaVazia(exames);
+
+        return exames.stream().map(ExameMapper::toDtoFromEntity).toList();
     }
 
-    public List<Exame> findByPacienteId(Long pacienteId){
+    public List<ExameResponseDTO> findByPacienteId(Long pacienteId){
         List<Exame> exames = this.exameRepository.findByPaciente_id(pacienteId);
 
-        if (exames.isEmpty()){
-            throw new NotFoundException("Nenhum exame encontrado.");
-        }
-        return exames;
+        verificarListaVazia(exames);
+
+        return exames.stream().map(ExameMapper::toDtoFromEntity).toList();
     }
 
-    public List<Exame> findAll(){
-        List<Exame> list = this.exameRepository.findAll();
+    public List<ExameResponseDTO> findAll(){
+        List<Exame> exames = this.exameRepository.findAll();
 
-        if (list.isEmpty()){
-            throw new NotFoundException("Nenhum exame encontrado");
+        verificarListaVazia(exames);
+
+        return exames.stream().map(ExameMapper::toDtoFromEntity).toList();
+    }
+
+    private void verificarListaVazia(List<Exame> exames){
+        if (exames == null ||exames.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Nenhuma exame agendado."
+            );
         }
-        return list;
     }
 
     @Transactional
