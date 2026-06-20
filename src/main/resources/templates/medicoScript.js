@@ -9,18 +9,23 @@ window.onload = async () => {
     listarTodos();
 };
 
-// Busca as especialidades no BD e coloca no <select>
+// Busca as especialidades no BD e coloca no container de checkboxes
 async function carregarEspecialidades() {
     try {
         const response = await fetch(API_ESPECIALIDADE);
         const lista = await response.json();
-        const select = document.getElementById('select-especialidade');
+        const container = document.getElementById('especialidades-container');
 
-        select.innerHTML = '<option value="" disabled selected>Selecione uma especialidade...</option>';
+        container.innerHTML = '';
 
         if (Array.isArray(lista)) {
             lista.forEach(esp => {
-                select.innerHTML += `<option value="${esp.id}">${esp.nome}</option>`;
+                container.innerHTML += `
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="especialidades" value="${esp.id}" id="esp-${esp.id}">
+                        <span>${esp.nome}</span>
+                    </label>
+                `;
             });
         }
     } catch (error) {
@@ -43,15 +48,19 @@ async function salvarMedico(event) {
     event.preventDefault();
 
     const id = document.getElementById('medico-id').value;
-    const especialidadeId = document.getElementById('select-especialidade').value;
+    const checkedCheckboxes = document.querySelectorAll('input[name="especialidades"]:checked');
+    const listEspecialidadesIds = Array.from(checkedCheckboxes).map(cb => Number(cb.value));
+
+    if (listEspecialidadesIds.length === 0) {
+        alert("Selecione pelo menos uma especialidade!");
+        return;
+    }
 
     const medicoData = {
         nome: document.getElementById('nome').value,
         crm: document.getElementById('crm').value,
         telefone: document.getElementById('telefone').value,
-        especialidades: [
-            { id: especialidadeId }
-        ]
+        listEspecialidadesIds: listEspecialidadesIds
     };
 
     const method = id ? 'PUT' : 'POST';
@@ -109,7 +118,7 @@ function renderizarTabela(medicos) {
                 <td>${nomesEspecialidades}</td>
                 <td>
                     <div class="actions-container">
-                        <button class="btn-edit" onclick="prepararEdicao(${m.id}, '${m.nome}', '${m.crm}', '${m.telefone}')">Editar</button>
+                        <button class="btn-edit" onclick="prepararEdicao(${m.id}, '${m.nome}', '${m.crm}', '${m.telefone}', '${(m.especialidades || []).map(e => e.id).join(',')}')">Editar</button>
                         <button class="btn-delete" onclick="excluirMedico(${m.id})">Excluir</button>
                     </div>
                 </td>
@@ -118,11 +127,24 @@ function renderizarTabela(medicos) {
     });
 }
 
-function prepararEdicao(id, nome, crm, telefone) {
+function prepararEdicao(id, nome, crm, telefone, especialidadesIdsStr) {
     document.getElementById('medico-id').value = id;
     document.getElementById('nome').value = nome;
     document.getElementById('crm').value = crm;
     document.getElementById('telefone').value = telefone;
+
+    // Desmarca todos os checkboxes antes de marcar os do médico editado
+    const checkboxes = document.querySelectorAll('input[name="especialidades"]');
+    checkboxes.forEach(cb => cb.checked = false);
+
+    // Marca as especialidades associadas ao médico
+    if (especialidadesIdsStr) {
+        const ids = especialidadesIdsStr.split(',');
+        ids.forEach(espId => {
+            const cb = document.getElementById('esp-' + espId);
+            if (cb) cb.checked = true;
+        });
+    }
 
     document.getElementById('form-title').innerText = "Editar Médico";
     document.getElementById('btn-cancel').style.display = "inline";
@@ -131,6 +153,11 @@ function prepararEdicao(id, nome, crm, telefone) {
 function resetForm() {
     document.getElementById('medico-form').reset();
     document.getElementById('medico-id').value = "";
+    
+    // Desmarca todos os checkboxes
+    const checkboxes = document.querySelectorAll('input[name="especialidades"]');
+    checkboxes.forEach(cb => cb.checked = false);
+
     document.getElementById('form-title').innerText = "Cadastrar Médico";
     document.getElementById('btn-cancel').style.display = "none";
 }

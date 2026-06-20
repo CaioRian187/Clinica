@@ -24,10 +24,10 @@
             <label>Telefone:</label>
             <input type="text" id="telefone" placeholder="(00) 00000-0000" required>
 
-            <label>Especialidade:</label>
-            <select id="select-especialidade" required>
-                <option value="" disabled selected>Selecione uma especialidade...</option>
-            </select>
+            <label>Especialidades:</label>
+            <div id="especialidades-container" class="checkbox-container">
+                <!-- Checkboxes carregados dinamicamente -->
+            </div>
 
             <button type="submit" id="btn-save" style="margin-top: 10px;">Salvar</button>
             <button type="button" id="btn-cancel" style="display:none; margin-top: 10px;" onclick="resetForm()">Cancelar</button>
