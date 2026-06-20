@@ -44,6 +44,23 @@ async function listarTodos() {
     }
 }
 
+async function buscarPorNome() {
+    const nome = document.getElementById('search-name').value;
+    if (!nome) return listarTodos();
+
+    try {
+        const response = await fetch(`${API_URL}/nome/${nome}`);
+        if (response.ok) {
+            const medico = await response.json();
+            renderizarTabela(medico ? [medico] : []);
+        } else {
+            alert("Médico não encontrado.");
+        }
+    } catch (error) {
+        console.error("Erro na busca:", error);
+    }
+}
+
 async function salvarMedico(event) {
     event.preventDefault();
 
@@ -103,18 +120,18 @@ function renderizarTabela(medicos) {
     if (!Array.isArray(medicos)) return;
 
     medicos.forEach(m => {
-        // Pega os nomes das especialidades e junta com vírgula
+        // Pega os nomes das especialidades e junta com quebra de linha
         let nomesEspecialidades = "Nenhuma";
         if(m.especialidades && m.especialidades.length > 0){
-            nomesEspecialidades = m.especialidades.map(e => e.nome).join(", ");
+            nomesEspecialidades = m.especialidades.map(e => e.nome).join("<br>");
         }
 
         tbody.innerHTML += `
             <tr>
                 <td>${m.id}</td>
                 <td>${m.nome}</td>
-                <td>${m.crm}</td>
-                <td>${m.telefone}</td>
+                <td style="white-space: nowrap;">${m.crm}</td>
+                <td style="white-space: nowrap;">${m.telefone}</td>
                 <td>${nomesEspecialidades}</td>
                 <td>
                     <div class="actions-container">
