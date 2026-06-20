@@ -3,8 +3,10 @@ package com.TrabalhoBD.clinica.services;
 import java.util.List;
 
 import com.TrabalhoBD.clinica.dtos.AdicionarEspecialidadeRequestDTO;
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
+import com.TrabalhoBD.clinica.mapper.EspecialidadeMapper;
 import com.TrabalhoBD.clinica.mapper.MedicoMapper;
 import com.TrabalhoBD.clinica.models.Especialidade;
 import com.TrabalhoBD.clinica.repositories.EspecialidadeRepository;
@@ -27,6 +29,9 @@ public class MedicoService {
 
     @Autowired
     private EspecialidadeRepository especialidadeRepository;
+
+    @Autowired
+    private EspecialidadeService especialidadeService;
 
     public MedicoResponseDTO findById(Long id){
         Medico medico = this.medicoRepository.findById(id)
@@ -60,18 +65,14 @@ public class MedicoService {
     }
 
     public MedicoResponseDTO adicionarEspecialidade(AdicionarEspecialidadeRequestDTO dto){
-        Medico medico = this.medicoRepository.findById(dto.medicoId())
-                .orElseThrow( () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Medico de Id: " + dto.medicoId() + " não encontrado."
-                ));
-        Especialidade especialidade = this.especialidadeRepository.findById(dto.especialidadeId())
-                .orElseThrow( () -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Especialidade de Id: " + dto.especialidadeId() + " não encontrado."
-                ));
+        MedicoResponseDTO medicoResponseDTO = this.findById(dto.medicoId());
+        Medico medico = MedicoMapper.toEntityFromDto(medicoResponseDTO);
 
-        medico.getEspecialidades().add(especialidade);
+        for (Long especialidadeId : dto.listEspecialidadesIds()){
+            EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
+            Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
+            medico.getEspecialidades().add(especialidade);
+        }
 
         this.medicoRepository.save(medico);
 
