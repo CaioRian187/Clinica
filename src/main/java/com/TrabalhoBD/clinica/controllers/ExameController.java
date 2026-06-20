@@ -43,9 +43,8 @@ public class ExameController {
     private PacienteService pacienteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Exame> findById(@PathVariable Long id){
-        Exame exame = this.exameService.findById(id);
-        return ResponseEntity.ok().body(exame);
+    public ResponseEntity<ExameResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findById(id));
     }
 
 
@@ -77,10 +76,8 @@ public class ExameController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Valid @RequestBody Exame exame, @PathVariable Long id){
-        exame.setId(id);
-        exame = this.exameService.update(exame);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ExameResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ExameRequestDTO dto ){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
