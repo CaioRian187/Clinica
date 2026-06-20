@@ -96,6 +96,8 @@ public class MedicoService {
         medico.setCrm(dto.crm());
         medico.setTelefone(dto.telefone());
 
+        medico.getEspecialidades().clear();
+
         for (Long especialidadeId : dto.listEspecialidadesIds()){
             EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
             Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
