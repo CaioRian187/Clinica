@@ -1,11 +1,12 @@
 package com.TrabalhoBD.clinica.dtos;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 public record ReceitaResponseDTO(
 
         Long receitaId,
-        LocalDate dataEmissao,
+        LocalDateTime dataEmissao,
         String medicamento,
         String dosagem,
         String instrucoes,

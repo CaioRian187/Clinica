@@ -61,4 +61,73 @@ public class Paciente {
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Exame> exames = new ArrayList<Exame>();
 
+    public Paciente(Long id, String nome, String cpf, LocalDate dataNascimento, String telefone, String endereco) {
+        this.id = id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.telefone = telefone;
+        this.endereco = endereco;
+    }
+
+    private Paciente(PacienteBuilder builder) {
+        this.nome = builder.nome;
+        this.cpf = builder.cpf;
+        this.dataNascimento = builder.dataNascimento;
+        this.telefone = builder.telefone;
+        this.endereco = builder.endereco;
+        this.consultas = builder.consultas;
+        this.exames = builder.exames;
+    }
+
+    public static class PacienteBuilder {
+        private String nome;
+        private String cpf;
+        private LocalDate dataNascimento;
+        private String telefone;
+        private String endereco;
+        private List<Consulta> consultas = new ArrayList<>();
+        private List<Exame> exames = new ArrayList<>();
+
+        public PacienteBuilder() {
+        }
+
+        public PacienteBuilder adicionarNome(String nome){
+            this.nome = nome;
+            return this;
+        }
+
+        public PacienteBuilder adicionarCpf(String cpf){
+            this.cpf = cpf;
+            return this;
+        }
+
+        public PacienteBuilder adicionarDataNascimento(LocalDate dataNascimente){
+            this.dataNascimento = dataNascimente;
+            return this;
+        }
+
+        public PacienteBuilder adicionarTelefone(String telefone) {
+            this.telefone = telefone;
+            return this;
+        }
+
+        public PacienteBuilder adicionarEndereco(String endereco) {
+            this.endereco = endereco;
+            return this;
+        }
+
+        public Paciente build() {
+            if (this.nome == null || this.nome.trim().isEmpty()) {
+                throw new IllegalStateException("O nome do paciente é obrigatório.");
+            }
+            if (this.cpf == null || this.cpf.trim().isEmpty()) {
+                throw new IllegalStateException("O CPF do paciente é obrigatório.");
+            }
+            if (this.dataNascimento == null) {
+                throw new IllegalStateException("A data de nascimento do paciente é obrigatória.");
+            }
+            return new Paciente(this);
+        }
+    }
 }

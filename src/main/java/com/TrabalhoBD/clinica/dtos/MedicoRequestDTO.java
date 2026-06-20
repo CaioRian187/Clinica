@@ -1,9 +1,6 @@
 package com.TrabalhoBD.clinica.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-
-import java.util.Set;
 
 public record MedicoRequestDTO(
 
@@ -14,10 +11,7 @@ public record MedicoRequestDTO(
         String crm,
 
         @NotBlank(message = "O telefone é obrigatório.")
-        String telefone,
-
-        @NotEmpty(message = "O médico deve possuir pelo menos uma especialidade.")
-        Set<Long> especialidadesIds
+        String telefone
 
 ) {
 }

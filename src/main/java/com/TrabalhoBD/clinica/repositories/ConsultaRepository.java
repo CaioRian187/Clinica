@@ -26,4 +26,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
     // Isso faz um JOIN entre Consulta -> Médico -> Especialidade
     @Query("SELECT c FROM Consulta c JOIN c.medico m JOIN m.especialidades e WHERE e.nome = :nomeEspecialidade")
     List<Consulta> findByEspecialidadeNome(@Param("nomeEspecialidade") String nomeEspecialidade);
+
+    boolean existsByDataHora(LocalDateTime dateHora);
+
 }

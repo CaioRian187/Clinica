@@ -1,9 +1,11 @@
 package com.TrabalhoBD.clinica.controllers;
 
-import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.EspecialidadeRequestDTO;
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.TrabalhoBD.clinica.models.Especialidade;
 import com.TrabalhoBD.clinica.services.EspecialidadeService;
@@ -32,37 +33,28 @@ public class EspecialidadeController {
     private EspecialidadeService especialidadeService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Especialidade> findById(@PathVariable long id){
-        Especialidade especialidade = this.especialidadeService.findById(id);
-        return ResponseEntity.ok().body(especialidade);
+    public ResponseEntity<EspecialidadeResponseDTO> findById(@PathVariable long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findById(id));
     }
 
     @GetMapping("nome/{nome}")
-    public ResponseEntity<Especialidade> findByNome(@Valid @PathVariable String nome){
-        Especialidade especialidade = this.especialidadeService.findByNome(nome);
-        return ResponseEntity.ok().body(especialidade);
+    public ResponseEntity<EspecialidadeResponseDTO> findByNome(@Valid @PathVariable String nome){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findByNome(nome));
     }
 
     @GetMapping
-    public ResponseEntity<List<Especialidade>> findAll(){
-        List<Especialidade> list = this.especialidadeService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<EspecialidadeResponseDTO>> findAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody Especialidade especialidade){
-        this.especialidadeService.create(especialidade);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(especialidade.getId())
-                .toUri();
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<EspecialidadeResponseDTO> create(@Valid @RequestBody EspecialidadeRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.especialidadeService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Valid @RequestBody Especialidade especialidade, @PathVariable long id){
-        especialidade.setId(id);
-        especialidade = this.especialidadeService.update(especialidade);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<EspecialidadeResponseDTO> update(@PathVariable Long id, @Valid @RequestBody EspecialidadeRequestDTO dto ){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")

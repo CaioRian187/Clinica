@@ -1,9 +1,12 @@
 package com.TrabalhoBD.clinica.controllers;
 
-import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.AdicionarEspecialidadeRequestDTO;
+import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
+import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,9 +18,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.services.MedicoService;
 
 import jakarta.validation.Valid;
@@ -32,38 +33,33 @@ public class MedicoController {
     private MedicoService medicoService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Medico> findById(@PathVariable Long id){
-        Medico medico = this.medicoService.findById(id);
-        return ResponseEntity.ok().body(medico);
+    public ResponseEntity<MedicoResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.ok().body(this.medicoService.findById(id));
     } 
 
     @GetMapping("nome/{nome}")
-    public ResponseEntity<Medico> findByNome(@Valid @PathVariable String nome){
-        Medico medico = this.medicoService.findByNome(nome);
-        return ResponseEntity.ok().body(medico);
+    public ResponseEntity<MedicoResponseDTO> findByNome(@Valid @PathVariable String nome){
+        return ResponseEntity.ok().body(this.medicoService.findByNome(nome));
     } 
 
     @GetMapping
-    public ResponseEntity<List<Medico>> findAllMedicos(){
-        List<Medico> list = this.medicoService.findAllMedicos();
-
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<MedicoResponseDTO>> findAllMedicos(){
+        return ResponseEntity.ok().body(this.medicoService.findAllMedicos());
     }
 
     @PostMapping
-    public ResponseEntity<Void> createMedico (@Valid @RequestBody Medico medico){
-        this.medicoService.createMedico(medico);
+    public ResponseEntity<MedicoResponseDTO> createMedico (@Valid @RequestBody MedicoRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.medicoService.createMedico(dto));
+    }
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(medico.getId()).toUri();
-
-        return ResponseEntity.created(uri).build();
+    @PutMapping("/addEspecialidade")
+    public ResponseEntity<MedicoResponseDTO> adicionarEspecialidade(@Valid @RequestBody AdicionarEspecialidadeRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.OK).body(this.medicoService.adicionarEspecialidade(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateMedico(@Valid @RequestBody Medico medico, @PathVariable Long id){
-        medico.setId(id);
-        medico = this.medicoService.updateMedico(medico);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long id, @Valid @RequestBody MedicoRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.medicoService.updateMedico(id, dto));
     }
 
     @DeleteMapping("/{id}")

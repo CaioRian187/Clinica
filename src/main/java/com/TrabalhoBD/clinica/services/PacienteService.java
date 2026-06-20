@@ -1,17 +1,20 @@
 package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
-import java.util.Optional;
 
+import com.TrabalhoBD.clinica.dtos.PacienteRequestDTO;
+import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
+import com.TrabalhoBD.clinica.mapper.PacienteMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Paciente;
 import com.TrabalhoBD.clinica.repositories.PacienteRepository;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PacienteService {
@@ -19,40 +22,65 @@ public class PacienteService {
     @Autowired
     private PacienteRepository pacienteRepository;
     
-    public Paciente findById(Long id){
-        Optional<Paciente> paciente = this.pacienteRepository.findById(id);
-        return paciente.orElseThrow( () -> new NotFoundException("Paciente de id = " + id + " não encontrado."));
+    public PacienteResponseDTO findById(Long id){
+        Paciente paciente = this.pacienteRepository.findById(id)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Paciente de Id: " + id + " não encontrado"
+                ));
+
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
-    public Paciente findByNome(String nome){
-        Optional<Paciente> paciente = this.pacienteRepository.findByNome(nome);
-        return paciente.orElseThrow( () -> new NotFoundException("Paciete de nome = " + nome + " não encontrado"));
+    public PacienteResponseDTO findByNome(String nome){
+
+        Paciente paciente = this.pacienteRepository.findByNome(nome)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Paciente de nome: " + nome + " não encontrado."
+                ));
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
-    public List<Paciente> findAll(){
-        List<Paciente> list = this.pacienteRepository.findAll();
-        if (list.isEmpty()){
-            throw new NotFoundException("Nenhum paciente encontrado");
-        }
-        return list;
+    public List<PacienteResponseDTO> findAll(){
+        return this.pacienteRepository.findAll()
+                .stream().map(PacienteMapper::toDtoFromEntity)
+                .toList();
     }
 
     @Transactional
-    public void createPaciente(Paciente paciente){
+    public PacienteResponseDTO createPaciente(PacienteRequestDTO dto){
+
+        Paciente paciente = new Paciente.PacienteBuilder()
+                .adicionarNome(dto.nome())
+                .adicionarCpf(dto.cpf())
+                .adicionarDataNascimento(dto.dataNascimento())
+                .adicionarTelefone(dto.telefone())
+                .adicionarEndereco(dto.endereco())
+                .build();
+
         this.pacienteRepository.save(paciente);
+
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
     @Transactional
-    public Paciente updatePaciente(Paciente paciente){
-        Paciente newPaciente = this.findById(paciente.getId());
+    public PacienteResponseDTO updatePaciente(Long pacienteId, PacienteRequestDTO dto){
+        Paciente paciente = this.pacienteRepository.findById(pacienteId)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Paciente de Id: " + pacienteId + " não encontrado"
+                ));
 
-        newPaciente.setNome(paciente.getNome());
-        newPaciente.setCpf(paciente.getCpf());
-        newPaciente.setDataNascimento(paciente.getDataNascimento());
-        newPaciente.setTelefone(paciente.getTelefone());
-        newPaciente.setEndereco(paciente.getEndereco());
+        paciente.setNome(dto.nome());
+        paciente.setCpf(dto.cpf());
+        paciente.setDataNascimento(dto.dataNascimento());
+        paciente.setTelefone(dto.telefone());
+        paciente.setEndereco(dto.endereco());
 
-        return this.pacienteRepository.save(newPaciente);
+        this.pacienteRepository.save(paciente);
+
+        return PacienteMapper.toDtoFromEntity(paciente);
     }
 
     public void deletePaciente(Long id){

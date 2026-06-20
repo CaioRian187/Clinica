@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 public record ExameResponseDTO(
         Long id,
         String nome,
-        String data,
         LocalDateTime dataHora,
+        String descricao,
         Long medicoId,
-        Long pacienteId
+        String nomeMedico,
+        Long pacienteId,
+        String nomePaciente
 ) {
 }

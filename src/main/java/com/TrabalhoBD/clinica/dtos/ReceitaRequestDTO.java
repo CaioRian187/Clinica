@@ -4,13 +4,13 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record ReceitaRequestDTO(
 
         @NotNull(message = "A data de emissão da receita é obrigatório.")
         @FutureOrPresent(message = "Você não pode colocar uma data que já passou em uma receita.")
-        LocalDate dataEmissao,
+        LocalDateTime dataEmissao,
 
         @NotBlank(message = "O medicamento não pode ser nulo ou vazio.")
         String medicamento,

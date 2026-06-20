@@ -1,7 +1,5 @@
 package com.TrabalhoBD.clinica.dtos;
 
-import com.TrabalhoBD.clinica.models.Receita;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,7 +9,9 @@ public record ConsultaResponseDTO(
         LocalDateTime datahora,
         String observacoes,
         Long medicoId,
+        String nomeMedico,
         Long pacienteId,
+        String nomePaciente,
         List<ReceitaResponseDTO> receitas
 
 ) {

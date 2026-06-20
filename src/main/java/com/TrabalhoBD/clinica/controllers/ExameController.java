@@ -1,9 +1,11 @@
 package com.TrabalhoBD.clinica.controllers;
 
-import java.net.URI;
 import java.util.List;
 
+import com.TrabalhoBD.clinica.dtos.ExameRequestDTO;
+import com.TrabalhoBD.clinica.dtos.ExameResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.TrabalhoBD.clinica.models.Exame;
 import com.TrabalhoBD.clinica.services.ExameService;
 import com.TrabalhoBD.clinica.services.MedicoService;
 import com.TrabalhoBD.clinica.services.PacienteService;
@@ -40,47 +40,35 @@ public class ExameController {
     private PacienteService pacienteService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Exame> findById(@PathVariable Long id){
-        Exame exame = this.exameService.findById(id);
-        return ResponseEntity.ok().body(exame);
+    public ResponseEntity<ExameResponseDTO> findById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findById(id));
     }
 
 
-    @GetMapping("/medico/{id_medico}")
-    public ResponseEntity<List<Exame>> findByMedicoId(@PathVariable Long id_medico){
-        this.medicoService.findById(id_medico);
-
-        List<Exame> exames = this.exameService.findByMedicoid(id_medico);
-        return ResponseEntity.ok().body(exames);
+    @GetMapping("/medico/{medicoId}")
+    public ResponseEntity<List<ExameResponseDTO>> findByMedicoId(@PathVariable Long medicoId){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findByMedicoid(medicoId));
     }
 
-    @GetMapping("/paciente/{id_paciente}")
-    public ResponseEntity<List<Exame>> findByPacienteId(@PathVariable Long id_paciente){
-        this.pacienteService.findById(id_paciente);
-        List<Exame> exames = this.exameService.findByPacienteId(id_paciente);
-        return ResponseEntity.ok().body(exames);
+    @GetMapping("/paciente/{pacienteId}")
+    public ResponseEntity<List<ExameResponseDTO>> findByPacienteId(@PathVariable Long pacienteId){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findByPacienteId(pacienteId));
     }
 
     @GetMapping
-    public ResponseEntity<List<Exame>> findAll(){
-        List<Exame> list = this.exameService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<ExameResponseDTO>> findAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.findAll());
     }
 
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody Exame exame){
-        this.exameService.create(exame);
-
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(exame.getId()).toUri();
-        return ResponseEntity.created(uri).build();
+    public ResponseEntity<ExameResponseDTO> create(@Valid @RequestBody ExameRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.exameService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Valid @RequestBody Exame exame, @PathVariable Long id){
-        exame.setId(id);
-        exame = this.exameService.update(exame);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ExameResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ExameRequestDTO dto ){
+        return ResponseEntity.status(HttpStatus.OK).body(this.exameService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")

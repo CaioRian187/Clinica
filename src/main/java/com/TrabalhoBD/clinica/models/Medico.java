@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -21,7 +23,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class Medico {
 
     @Id
@@ -56,5 +57,63 @@ public class Medico {
     @OneToMany(mappedBy = "medico")
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Exame> exames = new ArrayList<Exame>();
-    
+
+    // Construtor privado baseado no exemplo: mapeia os dados do Builder para a Entidade
+    private Medico(MedicoBuilder builder) {
+        this.nome = builder.nome;
+        this.crm = builder.crm;
+        this.telefone = builder.telefone;
+        this.especialidades = builder.especialidades;
+        this.consultas = builder.consultas;
+        this.exames = builder.exames;
+    }
+
+    public Medico(Long id, String nome, String crm, String telefone, Set<EspecialidadeResponseDTO> especialidades) {
+        this.id = id;
+        this.nome = nome;
+        this.crm = crm;
+        this.telefone = telefone;
+        this.especialidades = especialidades.stream().map(
+                dto -> new Especialidade(dto.id(),dto.nome())
+        ).collect(Collectors.toSet());
+    }
+
+    public static class MedicoBuilder {
+        private String nome;
+        private String crm;
+        private String telefone;
+        private Set<Especialidade> especialidades = new HashSet<>();
+        private List<Consulta> consultas = new ArrayList<>();
+        private List<Exame> exames = new ArrayList<>();
+
+        public MedicoBuilder(){
+
+        }
+
+        public MedicoBuilder adicionarNome(String nome){
+            this.nome = nome;
+            return this;
+        }
+
+        public MedicoBuilder adicionarCrm(String crm){
+            this.crm = crm;
+            return this;
+        }
+
+        public MedicoBuilder adicionarTelefone(String telefone) {
+            this.telefone = telefone;
+            return this;
+        }
+
+        public Medico build() {
+            if (this.nome == null || this.nome.isBlank()) {
+                throw new IllegalStateException("O nome do médico não pode ser nulo ou vazio.");
+            }
+            if (this.crm == null || this.crm.trim().isBlank()) {
+                throw new IllegalStateException("O CRM do médico é obrigatório.");
+            }
+            return new Medico(this);
+        }
+    }
+
 }
