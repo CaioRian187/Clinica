@@ -8,20 +8,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class RestExceptionHandler {//extends ResponseEntityExceptionHandler{
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorMessage> MedicoNotFoundHandler(NotFoundException exception){
-        ErrorMessage response = new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
+public class RestExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorMessage> DataIntegrityViolationExceptionHandler(DataIntegrityViolationException exception){
