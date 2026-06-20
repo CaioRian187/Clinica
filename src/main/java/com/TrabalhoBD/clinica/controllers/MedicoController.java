@@ -33,39 +33,34 @@ public class MedicoController {
     private MedicoService medicoService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<MedicoResponseDTO> findById(@PathVariable Long id){
+    public ResponseEntity<MedicoResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(this.medicoService.findById(id));
-    } 
+    }
 
     @GetMapping("nome/{nome}")
-    public ResponseEntity<MedicoResponseDTO> findByNome(@Valid @PathVariable String nome){
+    public ResponseEntity<MedicoResponseDTO> findByNome(@Valid @PathVariable String nome) {
         return ResponseEntity.ok().body(this.medicoService.findByNome(nome));
-    } 
+    }
 
     @GetMapping
-    public ResponseEntity<List<MedicoResponseDTO>> findAllMedicos(){
+    public ResponseEntity<List<MedicoResponseDTO>> findAllMedicos() {
         return ResponseEntity.ok().body(this.medicoService.findAllMedicos());
     }
 
     @PostMapping
-    public ResponseEntity<MedicoResponseDTO> createMedico (@Valid @RequestBody MedicoRequestDTO dto){
+    public ResponseEntity<MedicoResponseDTO> createMedico(@Valid @RequestBody MedicoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.medicoService.createMedico(dto));
     }
 
-    @PutMapping("/addEspecialidade")
-    public ResponseEntity<MedicoResponseDTO> adicionarEspecialidade(@Valid @RequestBody AdicionarEspecialidadeRequestDTO dto){
-        return ResponseEntity.status(HttpStatus.OK).body(this.medicoService.adicionarEspecialidade(dto));
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long id, @Valid @RequestBody MedicoRequestDTO dto){
+    public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long id, @Valid @RequestBody MedicoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.medicoService.updateMedico(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMedico(@PathVariable Long id){
+    public ResponseEntity<Void> deleteMedico(@PathVariable Long id) {
         this.medicoService.deleteMedico(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }

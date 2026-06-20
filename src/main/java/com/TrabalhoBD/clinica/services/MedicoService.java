@@ -64,22 +64,6 @@ public class MedicoService {
         return list.stream().map(MedicoMapper::toDtoFromEntity).toList();
     }
 
-    public MedicoResponseDTO adicionarEspecialidade(AdicionarEspecialidadeRequestDTO dto){
-        MedicoResponseDTO medicoResponseDTO = this.findById(dto.medicoId());
-        Medico medico = MedicoMapper.toEntityFromDto(medicoResponseDTO);
-
-        for (Long especialidadeId : dto.listEspecialidadesIds()){
-            EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
-            Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
-            medico.getEspecialidades().add(especialidade);
-        }
-
-        this.medicoRepository.save(medico);
-
-        return MedicoMapper.toDtoFromEntity(medico);
-    }
-
-
     @Transactional
     public MedicoResponseDTO createMedico(MedicoRequestDTO dto){
 
@@ -88,6 +72,12 @@ public class MedicoService {
                 .adicionarCrm(dto.crm())
                 .adicionarTelefone(dto.telefone())
                 .build();
+
+        for (Long especialidadeId : dto.listEspecialidadesIds()){
+            EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
+            Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
+            novoMedico.getEspecialidades().add(especialidade);
+        }
 
         this.medicoRepository.save(novoMedico);
 
@@ -105,6 +95,12 @@ public class MedicoService {
         medico.setNome(dto.nome());
         medico.setCrm(dto.crm());
         medico.setTelefone(dto.telefone());
+
+        for (Long especialidadeId : dto.listEspecialidadesIds()){
+            EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
+            Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
+            medico.getEspecialidades().add(especialidade);
+        }
 
         this.medicoRepository.save(medico);
 
