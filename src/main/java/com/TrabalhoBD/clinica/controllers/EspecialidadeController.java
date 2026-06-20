@@ -33,21 +33,18 @@ public class EspecialidadeController {
     private EspecialidadeService especialidadeService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Especialidade> findById(@PathVariable long id){
-        Especialidade especialidade = this.especialidadeService.findById(id);
-        return ResponseEntity.ok().body(especialidade);
+    public ResponseEntity<EspecialidadeResponseDTO> findById(@PathVariable long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findById(id));
     }
 
     @GetMapping("nome/{nome}")
-    public ResponseEntity<Especialidade> findByNome(@Valid @PathVariable String nome){
-        Especialidade especialidade = this.especialidadeService.findByNome(nome);
-        return ResponseEntity.ok().body(especialidade);
+    public ResponseEntity<EspecialidadeResponseDTO> findByNome(@Valid @PathVariable String nome){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findByNome(nome));
     }
 
     @GetMapping
-    public ResponseEntity<List<Especialidade>> findAll(){
-        List<Especialidade> list = this.especialidadeService.findAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<List<EspecialidadeResponseDTO>> findAll(){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findAll());
     }
 
     @PostMapping
@@ -56,10 +53,8 @@ public class EspecialidadeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@Valid @RequestBody Especialidade especialidade, @PathVariable long id){
-        especialidade.setId(id);
-        especialidade = this.especialidadeService.update(especialidade);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<EspecialidadeResponseDTO> update(@PathVariable Long id, @Valid @RequestBody EspecialidadeRequestDTO dto ){
+        return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")

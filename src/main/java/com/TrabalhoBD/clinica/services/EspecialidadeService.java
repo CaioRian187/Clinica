@@ -5,14 +5,17 @@ import java.util.Optional;
 
 import com.TrabalhoBD.clinica.dtos.EspecialidadeRequestDTO;
 import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
+import com.TrabalhoBD.clinica.mapper.EspecialidadeMapper;
+import com.TrabalhoBD.clinica.models.Receita;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Especialidade;
 import com.TrabalhoBD.clinica.repositories.EspecialidadeRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EspecialidadeService {
@@ -20,22 +23,40 @@ public class EspecialidadeService {
     @Autowired
     private EspecialidadeRepository especialidadeRepository;
 
-    public Especialidade findById(long id){
-        Optional<Especialidade> especialidade = this.especialidadeRepository.findById(id);
-        return especialidade.orElseThrow(() -> new NotFoundException("Especialidade de id = " + id + " não encontrada"));
+    public EspecialidadeResponseDTO findById(long id){
+        Especialidade especialidade = this.especialidadeRepository.findById(id)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Especialidade de Id: " + id + " não encontrada."
+                ));
+        return EspecialidadeMapper.toDtoFromEntity(especialidade);
     }
 
-    public Especialidade findByNome(String nome){
-        return especialidadeRepository.findByNome(nome)
-                .orElseThrow(() -> new NotFoundException("Especialidade não encontrada"));
+    public EspecialidadeResponseDTO findByNome(String nome){
+        Especialidade especialidade = this.especialidadeRepository.findByNome(nome)
+                .orElseThrow( () -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Especialidade de Nome: " + nome + " não encontrada."
+                ));
+        return EspecialidadeMapper.toDtoFromEntity(especialidade);
     }
 
-    public List<Especialidade> findAll(){
-        List<Especialidade> list = this.especialidadeRepository.findAll();
-        if (list.isEmpty()){
-            throw new NotFoundException("Nenhuma especialidade encontrada");
+    public List<EspecialidadeResponseDTO> findAll(){
+        List<Especialidade> especialidades = this.especialidadeRepository.findAll();
+
+        verificarListaVazia(especialidades);
+
+        return especialidades.stream().map(EspecialidadeMapper::toDtoFromEntity).toList();
+    }
+
+
+    private void verificarListaVazia(List<Especialidade> especialidades){
+        if (especialidades == null || especialidades.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Nenhuma especialidade encontrada."
+            );
         }
-        return list;
     }
 
     @Transactional
@@ -45,17 +66,20 @@ public class EspecialidadeService {
 
         this.especialidadeRepository.save(especialidade);
 
-        return new EspecialidadeResponseDTO(
-                especialidade.getId(),
-                especialidade.getNome()
-        );
+        return EspecialidadeMapper.toDtoFromEntity(especialidade);
     }
 
     @Transactional
-    public Especialidade update(Especialidade especialidade){
-        Especialidade newEspecialidade = findById(especialidade.getId());
-        newEspecialidade.setNome(especialidade.getNome());
-        return this.especialidadeRepository.save(newEspecialidade);
+    public EspecialidadeResponseDTO update(Long id, EspecialidadeRequestDTO dto){
+
+        EspecialidadeResponseDTO especialidadeResponseDTO = this.findById(id);
+        Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
+
+        especialidade.setNome(dto.nome());
+
+        this.especialidadeRepository.save(especialidade);
+
+        return EspecialidadeMapper.toDtoFromEntity(especialidade);
     }
 
     public void delete(long id){
