@@ -108,8 +108,10 @@ function renderizarTabela(medicos) {
                 <td>${m.telefone}</td>
                 <td>${nomesEspecialidades}</td>
                 <td>
-                    <button class="btn-edit" onclick="prepararEdicao(${m.id}, '${m.nome}', '${m.crm}', '${m.telefone}')">Editar</button>
-                    <button class="btn-delete" onclick="excluirMedico(${m.id})">Excluir</button>
+                    <div class="actions-container">
+                        <button class="btn-edit" onclick="prepararEdicao(${m.id}, '${m.nome}', '${m.crm}', '${m.telefone}')">Editar</button>
+                        <button class="btn-delete" onclick="excluirMedico(${m.id})">Excluir</button>
+                    </div>
                 </td>
             </tr>
         `;
