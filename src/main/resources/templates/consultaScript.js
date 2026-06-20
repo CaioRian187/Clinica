@@ -67,10 +67,10 @@ async function salvarConsulta(event) {
     const dataHoraFormatada = `${dataInput}T${horarioInput}:00`;
 
     const consulta = {
-        dataHora: dataHoraFormatada,
+        datahora: dataHoraFormatada,
         observacoes: document.getElementById('observacoes').value,
-        medico: { id: medicoId },
-        paciente: { id: pacienteId }
+        medicoId: Number(medicoId),
+        pacienteId: Number(pacienteId)
     };
 
     const method = id ? 'PUT' : 'POST';
@@ -108,13 +108,13 @@ async function listarConsultas() {
         if (!Array.isArray(consultas)) return;
 
         consultas.forEach(c => {
-            const nomeMedico = c.medico ? c.medico.nome : 'N/A';
-            const nomePaciente = c.paciente ? c.paciente.nome : 'N/A';
+            const nomeMedico = c.nomeMedico || 'N/A';
+            const nomePaciente = c.nomePaciente || 'N/A';
 
             // FORMATAR PARA BRASIL (DD/MM/YYYY HH:MM)
             let dataExibicao = "Data Inválida";
-            if (c.dataHora) {
-                const dataObj = new Date(c.dataHora);
+            if (c.datahora) {
+                const dataObj = new Date(c.datahora);
                 dataExibicao = dataObj.toLocaleDateString('pt-BR') + ' às ' +
                                dataObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
             }
@@ -126,7 +126,9 @@ async function listarConsultas() {
                     <td>${nomePaciente}</td>
                     <td>${c.observacoes}</td>
                     <td>
-                        <button class="btn-delete" onclick="excluirConsulta(${c.id})">Cancelar</button>
+                        <div class="actions-container">
+                            <button class="btn-delete" onclick="excluirConsulta(${c.id})">Cancelar</button>
+                        </div>
                     </td>
                 </tr>`;
         });
