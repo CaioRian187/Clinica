@@ -72,7 +72,7 @@ public class ReceitaService {
         if (receitas == null ||receitas.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Nenhuma consulta agendada."
+                    "Nenhuma receita encontrada."
             );
         }
     }
