@@ -1,7 +1,5 @@
 package com.TrabalhoBD.clinica.dtos;
 
-import com.TrabalhoBD.clinica.models.Receita;
-
 import java.time.LocalDateTime;
 import java.util.List;
 

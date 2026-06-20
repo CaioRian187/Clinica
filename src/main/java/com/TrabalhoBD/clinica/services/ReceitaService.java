@@ -1,7 +1,6 @@
 package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.TrabalhoBD.clinica.dtos.*;
 import com.TrabalhoBD.clinica.mapper.ConsultaMapper;
@@ -15,11 +14,9 @@ import com.TrabalhoBD.clinica.repositories.ConsultaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Receita;
 import com.TrabalhoBD.clinica.repositories.ReceitaRepository;
 import org.springframework.web.server.ResponseStatusException;

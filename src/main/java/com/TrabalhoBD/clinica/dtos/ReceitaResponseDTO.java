@@ -1,6 +1,6 @@
 package com.TrabalhoBD.clinica.dtos;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 public record ReceitaResponseDTO(

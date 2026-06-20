@@ -1,6 +1,5 @@
 package com.TrabalhoBD.clinica.controllers;
 
-import java.net.URI;
 import java.util.List;
 
 import com.TrabalhoBD.clinica.dtos.EspecialidadeRequestDTO;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.TrabalhoBD.clinica.models.Especialidade;
 import com.TrabalhoBD.clinica.services.EspecialidadeService;

@@ -1,7 +1,6 @@
 package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.TrabalhoBD.clinica.dtos.ExameRequestDTO;
 import com.TrabalhoBD.clinica.dtos.ExameResponseDTO;
@@ -10,7 +9,6 @@ import com.TrabalhoBD.clinica.dtos.PacienteResponseDTO;
 import com.TrabalhoBD.clinica.mapper.ExameMapper;
 import com.TrabalhoBD.clinica.mapper.MedicoMapper;
 import com.TrabalhoBD.clinica.mapper.PacienteMapper;
-import com.TrabalhoBD.clinica.models.Consulta;
 import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.models.Paciente;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.TrabalhoBD.clinica.exceptions.NotFoundException;
 import com.TrabalhoBD.clinica.models.Exame;
 import com.TrabalhoBD.clinica.repositories.ExameRepository;
 import org.springframework.web.server.ResponseStatusException;

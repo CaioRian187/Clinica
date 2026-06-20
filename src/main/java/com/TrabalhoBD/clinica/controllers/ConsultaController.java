@@ -1,19 +1,15 @@
 package com.TrabalhoBD.clinica.controllers;
 
-import java.net.URI;
 import java.util.List;
 
 import com.TrabalhoBD.clinica.dtos.ConsultaRequestDTO;
 import com.TrabalhoBD.clinica.dtos.ConsultaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.TrabalhoBD.clinica.models.Consulta;
 import com.TrabalhoBD.clinica.services.ConsultaService;
 import com.TrabalhoBD.clinica.services.MedicoService;
 import com.TrabalhoBD.clinica.services.PacienteService;

@@ -1,9 +1,6 @@
 package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.TrabalhoBD.clinica.dtos.AdicionarEspecialidadeRequestDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
