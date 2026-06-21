@@ -8,7 +8,7 @@ import com.TrabalhoBD.clinica.models.Paciente;
 
 public abstract class ConsultaMapper {
 
-    public static ConsultaResponseDTO toDtoFromEntity(Consulta consulta){
+    public static ConsultaResponseDTO toDtoFromEntity(Consulta consulta) {
         return new ConsultaResponseDTO(
                 consulta.getId(),
                 consulta.getDataHora(),
@@ -24,20 +24,18 @@ public abstract class ConsultaMapper {
                                 entity.getMedicamento(),
                                 entity.getDosagem(),
                                 entity.getInstrucoes(),
-                                entity.getConsulta().getId()
-                        )).toList()
-        );
+                                entity.getConsulta().getId(),
+                                entity.getConsulta().getPaciente().getNome()))
+                        .toList());
     }
 
-    public static Consulta toEntityFromDto(ConsultaResponseDTO dto, Medico medico, Paciente paciente){
+    public static Consulta toEntityFromDto(ConsultaResponseDTO dto, Medico medico, Paciente paciente) {
         return new Consulta(
                 dto.id(),
                 dto.datahora(),
                 dto.observacoes(),
                 medico,
-                paciente
-        );
+                paciente);
     }
-
 
 }
