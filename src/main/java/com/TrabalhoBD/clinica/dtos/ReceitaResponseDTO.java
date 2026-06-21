@@ -1,6 +1,5 @@
 package com.TrabalhoBD.clinica.dtos;
 
-
 import java.time.LocalDateTime;
 
 public record ReceitaResponseDTO(
@@ -10,7 +9,6 @@ public record ReceitaResponseDTO(
         String medicamento,
         String dosagem,
         String instrucoes,
-        Long consultaId
-
-) {
+        Long consultaId,
+        String nomePaciente) {
 }

@@ -17,17 +17,16 @@ async function carregarConsultas() {
 
         if(Array.isArray(consultas)){
             consultas.forEach(c => {
-                const pacNome = c.paciente ? c.paciente.nome : 'Sem Paciente';
+                const pacNome = c.nomePaciente || 'Sem Paciente';
                 let dataFormatada = "Data n/d";
-                if(c.dataHora) {
-                    // Formata Data BR
-                    const dataObj = new Date(c.dataHora);
+                if(c.datahora) {
+                    const dataObj = new Date(c.datahora);
                     dataFormatada = dataObj.toLocaleDateString('pt-BR') + " " + dataObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
                 }
                 select.innerHTML += `<option value="${c.id}">${dataFormatada} - ${pacNome}</option>`;
             });
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Erro ao carregar consultas:", e); }
 }
 
 async function listarReceitas() {
@@ -40,38 +39,32 @@ async function listarReceitas() {
         if (!Array.isArray(receitas)) return;
 
         receitas.forEach(r => {
-            const pacienteNome = r.consulta && r.consulta.paciente ? r.consulta.paciente.nome : 'N/A';
+            // Nome do paciente vem direto do DTO flat
+            const nomePaciente = r.nomePaciente || 'N/A';
 
-            // Tratamento Data BR
+            // Formatar data de emissão para BR (DD/MM/YYYY HH:MM)
             let dataEmissaoStr = '-';
             if(r.dataEmissao) {
-                // Se vier String "2026-02-14"
-                if(typeof r.dataEmissao === 'string') {
-                     const partes = r.dataEmissao.split('-');
-                     dataEmissaoStr = `${partes[2]}/${partes[1]}/${partes[0]}`;
-                }
-                // Se vier Array [2026, 2, 14]
-                else if(Array.isArray(r.dataEmissao)) {
-                    const dia = r.dataEmissao[2].toString().padStart(2, '0');
-                    const mes = r.dataEmissao[1].toString().padStart(2, '0');
-                    const ano = r.dataEmissao[0];
-                    dataEmissaoStr = `${dia}/${mes}/${ano}`;
-                }
+                const dataObj = new Date(r.dataEmissao);
+                dataEmissaoStr = dataObj.toLocaleDateString('pt-BR') + ' às ' +
+                                 dataObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
             }
 
             tbody.innerHTML += `
                 <tr>
-                    <td>${r.id}</td>
-                    <td>${r.medicamento}</td>
-                    <td>${r.dosagem}</td>
+                    <td>${r.receitaId}</td>
                     <td>${dataEmissaoStr}</td>
-                    <td>${pacienteNome}</td>
+                    <td>${r.medicamento || '-'}</td>
+                    <td>${r.instrucoes || '-'}</td>
+                    <td>${nomePaciente}</td>
                     <td>
-                        <button class="btn-delete" onclick="excluirReceita(${r.id})">Excluir</button>
+                        <div class="actions-container">
+                            <button class="btn-delete" onclick="excluirReceita(${r.receitaId})">Excluir</button>
+                        </div>
                     </td>
                 </tr>`;
         });
-    } catch (error) { console.error(error); }
+    } catch (error) { console.error("Erro ao listar receitas:", error); }
 }
 
 async function salvarReceita(event) {
@@ -81,11 +74,23 @@ async function salvarReceita(event) {
 
     if(!consultaId) { alert("Selecione uma consulta."); return; }
 
+    // O ReceitaRequestDTO espera: dataEmissao (LocalDateTime), medicamento, dosagem, instrucoes, consultaId (Long)
+    // dataEmissao é gerada automaticamente como a data/hora atual + 1 min para evitar rejeição do @FutureOrPresent
+    const agora = new Date();
+    agora.setMinutes(agora.getMinutes() + 1);
+    const dataEmissaoFormatada = agora.getFullYear() + '-' +
+        String(agora.getMonth() + 1).padStart(2, '0') + '-' +
+        String(agora.getDate()).padStart(2, '0') + 'T' +
+        String(agora.getHours()).padStart(2, '0') + ':' +
+        String(agora.getMinutes()).padStart(2, '0') + ':' +
+        String(agora.getSeconds()).padStart(2, '0');
+
     const receita = {
+        dataEmissao: dataEmissaoFormatada,
         medicamento: document.getElementById('medicamento').value,
         dosagem: document.getElementById('dosagem').value,
         instrucoes: document.getElementById('instrucoes').value,
-        consulta: { id: consultaId }
+        consultaId: Number(consultaId)
     };
 
     const method = id ? 'PUT' : 'POST';
@@ -97,16 +102,24 @@ async function salvarReceita(event) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(receita)
         });
+
         if (response.ok) {
-            alert("Receita salva!");
+            alert("Receita salva com sucesso!");
             resetForm();
             listarReceitas();
+        } else {
+            const erroText = await response.text();
+            console.error("Erro do servidor:", erroText);
+            alert("Erro ao salvar receita. Verifique o console para detalhes.");
         }
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error(error);
+        alert("Erro de conexão com o servidor.");
+    }
 }
 
 async function excluirReceita(id) {
-    if(confirm("Excluir?")) {
+    if(confirm("Excluir esta receita?")) {
         await fetch(`${API_RECEITA}/${id}`, { method: 'DELETE' });
         listarReceitas();
     }

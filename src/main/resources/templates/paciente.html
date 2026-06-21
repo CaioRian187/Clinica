@@ -14,14 +14,24 @@
         <h2 id="form-title">Cadastrar Paciente</h2>
         <form id="paciente-form">
             <input type="hidden" id="paciente-id">
-            <input type="text" id="nome" placeholder="Nome Completo" required>
-            <input type="text" id="cpf" placeholder="CPF" required>
-            <input type="date" id="dataNascimento" required title="Data de Nascimento">
-            <input type="text" id="telefone" placeholder="Telefone" required>
-            <input type="text" id="endereco" placeholder="Endereço" required>
 
-            <button type="submit" id="btn-save">Salvar</button>
-            <button type="button" id="btn-cancel" style="display:none;" onclick="resetForm()">Cancelar</button>
+            <label>Nome:</label>
+            <input type="text" id="nome" placeholder="Nome Completo" required>
+
+            <label>CPF:</label>
+            <input type="text" id="cpf" placeholder="000.000.000-00" required>
+
+            <label>Data de Nascimento:</label>
+            <input type="date" id="dataNascimento" required>
+
+            <label>Telefone:</label>
+            <input type="text" id="telefone" placeholder="(00) 00000-0000" required>
+
+            <label>Endereço:</label>
+            <input type="text" id="endereco" placeholder="Endereço Completo" required>
+
+            <button type="submit" id="btn-save" style="margin-top: 10px;">Salvar</button>
+            <button type="button" id="btn-cancel" style="display:none; margin-top: 10px;" onclick="resetForm()">Cancelar</button>
         </form>
     </div>
 
@@ -33,7 +43,7 @@
             <th>CPF</th>
             <th>Telefone</th>
             <th>Endereço</th>
-            <th>Ações</th>
+            <th class="text-center">Ações</th>
         </tr>
         </thead>
         <tbody id="paciente-table-body"></tbody>

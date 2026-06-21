@@ -85,8 +85,10 @@ function renderizarTabela(especialidades) {
                 <td>${e.id}</td>
                 <td>${e.nome}</td>
                 <td>
-                    <button class="btn-edit" onclick="prepararEdicao('${e.id}', '${e.nome}')">Editar</button>
-                    <button class="btn-delete" onclick="excluirEspecialidade('${e.id}')">Excluir</button>
+                    <div class="actions-container">
+                        <button class="btn-edit" onclick="prepararEdicao('${e.id}', '${e.nome}')">Editar</button>
+                        <button class="btn-delete" onclick="excluirEspecialidade('${e.id}')">Excluir</button>
+                    </div>
                 </td>
             </tr>
         `;

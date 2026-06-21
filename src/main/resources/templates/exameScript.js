@@ -33,22 +33,24 @@ async function listarExames() {
         if (!Array.isArray(exames)) return;
 
         exames.forEach(e => {
-            // TRANSFORMAÇÃO DE DATA AQUI
-            // Pega '2026-01-13', divide em partes, inverte e junta com '/'
-            // Resultado: '13/01/2026'
-            let dataFormatada = e.data;
-            if (e.data) {
-                dataFormatada = e.data.split('-').reverse().join('/');
+            // FORMATAR PARA BRASIL (DD/MM/YYYY HH:MM)
+            let dataExibicao = "Data Inválida";
+            if (e.dataHora) {
+                const dataObj = new Date(e.dataHora);
+                dataExibicao = dataObj.toLocaleDateString('pt-BR') + ' às ' +
+                               dataObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
             }
 
             tbody.innerHTML += `
                 <tr>
                     <td>${e.nome}</td>
-                    <td>${dataFormatada} às ${e.horario}</td>
-                    <td>${e.medico ? e.medico.nome : '-'}</td>
-                    <td>${e.paciente ? e.paciente.nome : '-'}</td>
+                    <td>${dataExibicao}</td>
+                    <td>${e.nomeMedico || '-'}</td>
+                    <td>${e.nomePaciente || '-'}</td>
                     <td>
-                        <button class="btn-delete" onclick="excluirExame(${e.id})">Excluir</button>
+                        <div class="actions-container">
+                            <button class="btn-delete" onclick="excluirExame(${e.id})">Excluir</button>
+                        </div>
                     </td>
                 </tr>`;
         });
@@ -59,13 +61,22 @@ async function salvarExame(event) {
     event.preventDefault();
     const id = document.getElementById('exame-id').value;
 
+    const dataInput = document.getElementById('data').value;
+    const horarioInput = document.getElementById('horario').value;
+
+    if (!dataInput || !horarioInput) {
+        alert("Preencha a data e o horário.");
+        return;
+    }
+
+    const dataHoraFormatada = `${dataInput}T${horarioInput}:00`;
+
     const exame = {
         nome: document.getElementById('nome').value,
-        data: document.getElementById('data').value, // Envia string yyyy-MM-dd
-        horario: document.getElementById('horario').value,
+        dataHora: dataHoraFormatada,
         descricao: document.getElementById('descricao').value,
-        medico: { id: document.getElementById('select-medico').value },
-        paciente: { id: document.getElementById('select-paciente').value }
+        medicoId: Number(document.getElementById('select-medico').value),
+        pacienteId: Number(document.getElementById('select-paciente').value)
     };
 
     const method = id ? 'PUT' : 'POST';

@@ -1,5 +1,7 @@
 package com.TrabalhoBD.clinica.dtos;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 
 public record MedicoRequestDTO(
@@ -11,7 +13,9 @@ public record MedicoRequestDTO(
         String crm,
 
         @NotBlank(message = "O telefone é obrigatório.")
-        String telefone
+        String telefone,
+
+        List<Long> listEspecialidadesIds
 
 ) {
 }
