@@ -11,6 +11,7 @@ import com.TrabalhoBD.clinica.mapper.MedicoMapper;
 import com.TrabalhoBD.clinica.mapper.PacienteMapper;
 import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.models.Paciente;
+import com.TrabalhoBD.clinica.validation.exame.CadeiaValidacaoExame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,10 @@ public class ExameService {
 
     @Autowired
     private PacienteService pacienteService;
+
+    // GoF — Chain of Responsibility: cadeia de validação injetada pelo Spring
+    @Autowired
+    private CadeiaValidacaoExame cadeiaValidacao;
 
     public ExameResponseDTO findById(Long id){
         Exame exame = this.exameRepository.findById(id)
@@ -92,6 +97,9 @@ public class ExameService {
                 .adicionarPaciente(paciente)
                 .build();
 
+        // GoF — Chain of Responsibility: dispara a cadeia antes de salvar
+        cadeiaValidacao.validar(exame);
+
         this.exameRepository.save(exame);
 
         return ExameMapper.toDtoFromEntity(exame);
@@ -119,9 +127,13 @@ public class ExameService {
             exame.setPaciente(paciente);
         }
 
+
         exame.setNome(dto.nome());
         exame.setDataHora(dto.dataHora());
         exame.setDescricao(dto.descricao());
+
+        // GoF — Chain of Responsibility: revalida o novo horário ao atualizar
+        cadeiaValidacao.validar(exame);
 
         this.exameRepository.save(exame);
 

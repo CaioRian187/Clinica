@@ -12,6 +12,7 @@ import com.TrabalhoBD.clinica.mapper.MedicoMapper;
 import com.TrabalhoBD.clinica.mapper.PacienteMapper;
 import com.TrabalhoBD.clinica.models.Medico;
 import com.TrabalhoBD.clinica.models.Paciente;
+import com.TrabalhoBD.clinica.validation.consulta.CadeiaValidacaoConsulta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,10 @@ public class ConsultaService {
 
     @Autowired
     private MedicoService medicoService;
+
+    // GoF — Chain of Responsibility: cadeia de validação injetada pelo Spring
+    @Autowired
+    private CadeiaValidacaoConsulta cadeiaValidacao;
 
     @Autowired
     private PacienteService pacienteService;
@@ -86,7 +91,7 @@ public class ConsultaService {
         PacienteResponseDTO pacienteResponseDTO = this.pacienteService.findById(dto.pacienteId());
         Paciente paciente = PacienteMapper.toEntityFromDto(pacienteResponseDTO);
 
-        this.validarDataHora(dto.datahora());
+        //this.validarDataHora(dto.datahora());
 
         Consulta consulta = new Consulta.ConsultaBuilder()
                 .adicionarDataHora(dto.datahora())
@@ -95,13 +100,15 @@ public class ConsultaService {
                 .adicionarPaciente(paciente)
                 .build();
 
+        // GoF — Chain of Responsibility: dispara a cadeia antes de salvar
+        cadeiaValidacao.validar(consulta);
+
         this.consultaRepository.save(consulta);
 
         return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
     private void validarDataHora(LocalDateTime dateHora){
-
 
         if (this.consultaRepository.existsByDataHora(dateHora)){
             throw new ResponseStatusException(
@@ -133,6 +140,9 @@ public class ConsultaService {
 
         consulta.setDataHora(dto.datahora());
         consulta.setObservacoes(dto.observacoes());
+
+        // GoF — Chain of Responsibility: revalida o novo horário ao atualizar
+        cadeiaValidacao.validar(consulta);
 
         this.consultaRepository.save(consulta);
 
