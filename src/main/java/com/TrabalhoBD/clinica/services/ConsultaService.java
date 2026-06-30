@@ -1,6 +1,5 @@
 package com.TrabalhoBD.clinica.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.TrabalhoBD.clinica.dtos.ConsultaRequestDTO;
@@ -26,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ConsultaService {
-    
+
     @Autowired
     private ConsultaRepository consultaRepository;
 
@@ -40,16 +39,15 @@ public class ConsultaService {
     @Autowired
     private PacienteService pacienteService;
 
-    public ConsultaResponseDTO findById(Long id){
+    public ConsultaResponseDTO findById(Long id) {
         Consulta consulta = this.consultaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Consulta de Id: " + id + " não encontrada."
-                ));
+                        "Consulta de Id: " + id + " não encontrada."));
         return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
-    public List<ConsultaResponseDTO> findAllByMedicoId(Long medicoId){
+    public List<ConsultaResponseDTO> findAllByMedicoId(Long medicoId) {
         List<Consulta> consultas = this.consultaRepository.findByMedico_id(medicoId);
 
         this.verificarListaVazia(consultas);
@@ -57,7 +55,7 @@ public class ConsultaService {
         return consultas.stream().map(ConsultaMapper::toDtoFromEntity).toList();
     }
 
-    public List<ConsultaResponseDTO> findAllByPacienteId(Long pacienteId){
+    public List<ConsultaResponseDTO> findAllByPacienteId(Long pacienteId) {
         List<Consulta> consultas = this.consultaRepository.findByPaciente_id(pacienteId);
 
         this.verificarListaVazia(consultas);
@@ -65,7 +63,7 @@ public class ConsultaService {
         return consultas.stream().map(ConsultaMapper::toDtoFromEntity).toList();
     }
 
-    public List<ConsultaResponseDTO> findAll(){
+    public List<ConsultaResponseDTO> findAll() {
         List<Consulta> consultas = this.consultaRepository.findAll();
 
         this.verificarListaVazia(consultas);
@@ -73,17 +71,16 @@ public class ConsultaService {
         return consultas.stream().map(ConsultaMapper::toDtoFromEntity).toList();
     }
 
-    private void verificarListaVazia(List<Consulta> consultas){
-        if (consultas == null ||consultas.isEmpty()) {
+    private void verificarListaVazia(List<Consulta> consultas) {
+        if (consultas == null || consultas.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Nenhuma consulta agendada."
-            );
+                    "Nenhuma consulta agendada.");
         }
     }
 
     @Transactional
-    public ConsultaResponseDTO createConsulta(ConsultaRequestDTO dto){
+    public ConsultaResponseDTO createConsulta(ConsultaRequestDTO dto) {
 
         MedicoResponseDTO medicoResponseDTO = this.medicoService.findById(dto.medicoId());
         Medico medico = MedicoMapper.toEntityFromDto(medicoResponseDTO);
@@ -91,7 +88,7 @@ public class ConsultaService {
         PacienteResponseDTO pacienteResponseDTO = this.pacienteService.findById(dto.pacienteId());
         Paciente paciente = PacienteMapper.toEntityFromDto(pacienteResponseDTO);
 
-        //this.validarDataHora(dto.datahora());
+        // this.validarDataHora(dto.datahora());
 
         Consulta consulta = new Consulta.ConsultaBuilder()
                 .adicionarDataHora(dto.datahora())
@@ -108,31 +105,20 @@ public class ConsultaService {
         return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
-    private void validarDataHora(LocalDateTime dateHora){
-
-        if (this.consultaRepository.existsByDataHora(dateHora)){
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Não é possível cadastrar essa consulta, já existe uma consulta cadastrada nessa data e horário."
-            );
-        }
-    }
-
     @Transactional
-    public ConsultaResponseDTO updateConsulta(Long id, ConsultaRequestDTO dto){
+    public ConsultaResponseDTO updateConsulta(Long id, ConsultaRequestDTO dto) {
         Consulta consulta = this.consultaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Consulta de Id: " + id + " não encontrada."
-                ));
+                        "Consulta de Id: " + id + " não encontrada."));
 
-        if (!consulta.getMedico().getId().equals(dto.medicoId())){
+        if (!consulta.getMedico().getId().equals(dto.medicoId())) {
             MedicoResponseDTO medicoResponseDTO = this.medicoService.findById(dto.medicoId());
             Medico medico = MedicoMapper.toEntityFromDto(medicoResponseDTO);
             consulta.setMedico(medico);
         }
 
-        if (!consulta.getPaciente().getId().equals(dto.pacienteId())){
+        if (!consulta.getPaciente().getId().equals(dto.pacienteId())) {
             PacienteResponseDTO pacienteResponseDTO = this.pacienteService.findById(dto.pacienteId());
             Paciente paciente = PacienteMapper.toEntityFromDto(pacienteResponseDTO);
             consulta.setPaciente(paciente);
@@ -149,17 +135,14 @@ public class ConsultaService {
         return ConsultaMapper.toDtoFromEntity(consulta);
     }
 
-    public void deleteConsulta(Long id){
+    public void deleteConsulta(Long id) {
         findById(id);
 
-        try{
+        try {
             this.consultaRepository.deleteById(id);
-        }
-        catch(DataIntegrityViolationException exception){
+        } catch (DataIntegrityViolationException exception) {
             throw new DataIntegrityViolationException("Não é possível excluir, pois a consulta possui vinculações");
         }
     }
-
-
 
 }

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.TrabalhoBD.clinica.models.Especialidade;
 import com.TrabalhoBD.clinica.services.EspecialidadeService;
 
 import jakarta.validation.Valid;
@@ -33,32 +32,33 @@ public class EspecialidadeController {
     private EspecialidadeService especialidadeService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<EspecialidadeResponseDTO> findById(@PathVariable long id){
+    public ResponseEntity<EspecialidadeResponseDTO> findById(@PathVariable long id) {
         return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findById(id));
     }
 
     @GetMapping("nome/{nome}")
-    public ResponseEntity<EspecialidadeResponseDTO> findByNome(@Valid @PathVariable String nome){
+    public ResponseEntity<EspecialidadeResponseDTO> findByNome(@Valid @PathVariable String nome) {
         return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findByNome(nome));
     }
 
     @GetMapping
-    public ResponseEntity<List<EspecialidadeResponseDTO>> findAll(){
+    public ResponseEntity<List<EspecialidadeResponseDTO>> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.findAll());
     }
 
     @PostMapping
-    public ResponseEntity<EspecialidadeResponseDTO> create(@Valid @RequestBody EspecialidadeRequestDTO dto){
+    public ResponseEntity<EspecialidadeResponseDTO> create(@Valid @RequestBody EspecialidadeRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.especialidadeService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EspecialidadeResponseDTO> update(@PathVariable Long id, @Valid @RequestBody EspecialidadeRequestDTO dto ){
+    public ResponseEntity<EspecialidadeResponseDTO> update(@PathVariable Long id,
+            @Valid @RequestBody EspecialidadeRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.OK).body(this.especialidadeService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id){
+    public ResponseEntity<Void> delete(@PathVariable long id) {
         this.especialidadeService.delete(id);
         return ResponseEntity.noContent().build();
     }

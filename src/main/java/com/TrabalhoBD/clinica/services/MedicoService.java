@@ -2,14 +2,12 @@ package com.TrabalhoBD.clinica.services;
 
 import java.util.List;
 
-import com.TrabalhoBD.clinica.dtos.AdicionarEspecialidadeRequestDTO;
 import com.TrabalhoBD.clinica.dtos.EspecialidadeResponseDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
 import com.TrabalhoBD.clinica.mapper.EspecialidadeMapper;
 import com.TrabalhoBD.clinica.mapper.MedicoMapper;
 import com.TrabalhoBD.clinica.models.Especialidade;
-import com.TrabalhoBD.clinica.repositories.EspecialidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -28,44 +26,38 @@ public class MedicoService {
     private MedicoRepository medicoRepository;
 
     @Autowired
-    private EspecialidadeRepository especialidadeRepository;
-
-    @Autowired
     private EspecialidadeService especialidadeService;
 
-    public MedicoResponseDTO findById(Long id){
+    public MedicoResponseDTO findById(Long id) {
         Medico medico = this.medicoRepository.findById(id)
-                .orElseThrow( () -> new ResponseStatusException(
+                .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Médico de Id: " + id + " não encontrado."
-                ));
+                        "Médico de Id: " + id + " não encontrado."));
 
         return MedicoMapper.toDtoFromEntity(medico);
     }
 
-    public MedicoResponseDTO findByNome(String nome){
+    public MedicoResponseDTO findByNome(String nome) {
         Medico medico = this.medicoRepository.findByNome(nome)
-                .orElseThrow( () -> new ResponseStatusException(
+                .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Médico de nome: " + nome + " não encontrado."
-                ));
+                        "Médico de nome: " + nome + " não encontrado."));
         return MedicoMapper.toDtoFromEntity(medico);
     }
 
-    public List<MedicoResponseDTO> findAllMedicos (){
+    public List<MedicoResponseDTO> findAllMedicos() {
         List<Medico> list = this.medicoRepository.findAll();
-        if (list.isEmpty()){
+        if (list.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Nenhum médico encontrado."
-            );
+                    "Nenhum médico encontrado.");
         }
 
         return list.stream().map(MedicoMapper::toDtoFromEntity).toList();
     }
 
     @Transactional
-    public MedicoResponseDTO createMedico(MedicoRequestDTO dto){
+    public MedicoResponseDTO createMedico(MedicoRequestDTO dto) {
 
         Medico novoMedico = new Medico.MedicoBuilder()
                 .adicionarNome(dto.nome())
@@ -73,7 +65,7 @@ public class MedicoService {
                 .adicionarTelefone(dto.telefone())
                 .build();
 
-        for (Long especialidadeId : dto.listEspecialidadesIds()){
+        for (Long especialidadeId : dto.listEspecialidadesIds()) {
             EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
             Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
             novoMedico.getEspecialidades().add(especialidade);
@@ -85,12 +77,11 @@ public class MedicoService {
     }
 
     @Transactional
-    public MedicoResponseDTO updateMedico(Long id, MedicoRequestDTO dto){
+    public MedicoResponseDTO updateMedico(Long id, MedicoRequestDTO dto) {
         Medico medico = this.medicoRepository.findById(id)
-                .orElseThrow( () -> new ResponseStatusException(
+                .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Médico de Id: " + id + " não encontrado."
-                ));
+                        "Médico de Id: " + id + " não encontrado."));
 
         medico.setNome(dto.nome());
         medico.setCrm(dto.crm());
@@ -98,7 +89,7 @@ public class MedicoService {
 
         medico.getEspecialidades().clear();
 
-        for (Long especialidadeId : dto.listEspecialidadesIds()){
+        for (Long especialidadeId : dto.listEspecialidadesIds()) {
             EspecialidadeResponseDTO especialidadeResponseDTO = this.especialidadeService.findById(especialidadeId);
             Especialidade especialidade = EspecialidadeMapper.toEntityFromDto(especialidadeResponseDTO);
             medico.getEspecialidades().add(especialidade);
@@ -109,7 +100,7 @@ public class MedicoService {
         return MedicoMapper.toDtoFromEntity(medico);
     }
 
-    public void deleteMedico(Long id){
+    public void deleteMedico(Long id) {
         findById(id);
 
         try {

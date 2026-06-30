@@ -2,7 +2,6 @@ package com.TrabalhoBD.clinica.controllers;
 
 import java.util.List;
 
-import com.TrabalhoBD.clinica.dtos.AdicionarEspecialidadeRequestDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoRequestDTO;
 import com.TrabalhoBD.clinica.dtos.MedicoResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +52,9 @@ public class MedicoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long id, @Valid @RequestBody MedicoRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.medicoService.updateMedico(id, dto));
+    public ResponseEntity<MedicoResponseDTO> updateMedico(@PathVariable Long id,
+            @Valid @RequestBody MedicoRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.medicoService.updateMedico(id, dto));
     }
 
     @DeleteMapping("/{id}")
