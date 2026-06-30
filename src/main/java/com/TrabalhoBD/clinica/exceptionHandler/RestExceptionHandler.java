@@ -31,8 +31,8 @@ public class RestExceptionHandler {
     // validação
     @ExceptionHandler(ValidacaoAgendamentoException.class)
     public ResponseEntity<ErrorMessage> validacaoAgendamentoHandler(ValidacaoAgendamentoException exception) {
-        ErrorMessage response = new ErrorMessage(HttpStatus.BAD_GATEWAY, exception.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(response);
+        ErrorMessage response = new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
